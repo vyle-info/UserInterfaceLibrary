@@ -72,10 +72,6 @@ local ThemeManager = {
         ["Monochrome"] = {
             4,
             { FontColor = "c7c7c7", MainColor = "161616", AccentColor = "8a8a8a", BackgroundColor = "161616", OutlineColor = "1b1b1b", BackgroundImage = "" },
-        },
-        ["Kittywise"] = {
-            5,
-            { FontColor = "ffffff", MainColor = "1c1c1c", AccentColor = "f29ac4", BackgroundColor = "191919", OutlineColor = "1c1c1c", BackgroundImage = "" },
         }
     }
 }
