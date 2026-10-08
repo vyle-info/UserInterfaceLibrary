@@ -29,28 +29,28 @@ local VisualBoxesCustomizationGroupBox = VisualsTab:AddGroupbox({
 })
 
 VisualBoxesCustomizationGroupBox:AddLabel("Global Outline Box Color"):AddColorPicker("OutlineBoxColor", {
-    Default = Color3.fromRGB(255, 255, 255),
+    Default = Color3.fromRGB(200, 0, 0),
     Title = "Global Outline Box Color",
     Transparency = 0,
     Resizable = true,
 })
 
 VisualBoxesCustomizationGroupBox:AddLabel("Visibility Outline Box Color"):AddColorPicker("VisibilityOutlineBoxColor", {
-    Default = Color3.fromRGB(255, 255, 255),
+    Default = Color3.fromRGB(0, 255, 25),
     Title = "Visibility Outline box Color",
     Transparency = 0,
     Resizable = true,
 })
 
 VisualBoxesCustomizationGroupBox:AddLabel("Global Filled Box Color"):AddColorPicker("FillBoxColor", {
-    Default = Color3.fromRGB(255, 255, 255),
+    Default = Color3.fromRGB(200, 0, 0),
     Title = "Global Filled Box Color",
     Transparency = 0.8,
     Resizable = true,
 })
 
 VisualBoxesCustomizationGroupBox:AddLabel("Visibility Filled Box Color"):AddColorPicker("VisibilityFillBoxColor", {
-    Default = Color3.fromRGB(255, 255, 255),
+    Default = Color3.fromRGB(0, 200, 20),
     Title = "Visibility Filled box Color",
     Transparency = 0.8,
     Resizable = true,
