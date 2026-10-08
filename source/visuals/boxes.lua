@@ -1,4 +1,3 @@
-
 local VisualBoxesGroupBox = VisualsTab:AddGroupbox({
     Side = "Left",
     Name = "Visual Activation Preferences (Boxes)",
@@ -46,14 +45,14 @@ VisualBoxesCustomizationGroupBox:AddLabel("Visibility Outline Box Color"):AddCol
 VisualBoxesCustomizationGroupBox:AddLabel("Global Filled Box Color"):AddColorPicker("FillBoxColor", {
     Default = Color3.fromRGB(255, 255, 255),
     Title = "Global Filled Box Color",
-    Transparency = 0.7,
+    Transparency = 0.8,
     Resizable = true,
 })
 
 VisualBoxesCustomizationGroupBox:AddLabel("Visibility Filled Box Color"):AddColorPicker("VisibilityFillBoxColor", {
     Default = Color3.fromRGB(255, 255, 255),
     Title = "Visibility Filled box Color",
-    Transparency = 0.7,
+    Transparency = 0.8,
     Resizable = true,
 })
 
@@ -65,7 +64,7 @@ local LocalPlayer = Players.LocalPlayer
 local Toggles = (getgenv and getgenv().Toggles) or (Library and Library.Toggles)
 local Options = (getgenv and getgenv().Options) or (Library and Library.Options)
 
-local BOX_THICKNESS = 0.4
+local BOX_THICKNESS = 0.2
 local MM2_PLACE_ID  = 142823291
 
 local MM2_GUN_COLOR   = Color3.fromRGB(0, 120, 255)
