@@ -1077,7 +1077,7 @@ function SaveManager:BuildConfigSection(Tab: any, IconName: string)
         Text = "Configuration JSON"
     })
 
-    ConfigurationBox:AddButton("Import config", function()
+    ConfigurationBox:AddButton("Import new config", function()
         local ConfigJSON = ConfigJSONInput.Value
         if IsStringEmpty(ConfigJSON) then
             SaveManager.Library:Notify("Configuration JSON cannot be empty")
@@ -1090,7 +1090,7 @@ function SaveManager:BuildConfigSection(Tab: any, IconName: string)
             end,
 
             "SaveManager_ImportConfig",
-            "Import config",
+            "Import new config",
             "Are you sure you want to import this configuration? Your current settings will be overwritten.",
 
             "Import",
