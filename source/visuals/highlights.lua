@@ -29,30 +29,30 @@ local VisualHighlightCustomizationGroupBox = VisualsTab:AddGroupbox({
 })
 
 VisualHighlightCustomizationGroupBox:AddLabel("Global Outline Color"):AddColorPicker("OutlineHighlightColor", {
-    Default = Color3.fromRGB(255, 255, 255),
+    Default = Color3.fromRGB(200, 0, 0),
     Title = "Global Outline Color",
     Transparency = 0,
     Resizable = true,
 })
 
 VisualHighlightCustomizationGroupBox:AddLabel("Visibility Outline Color"):AddColorPicker("VisibilityOutlineHighlightColor", {
-    Default = Color3.fromRGB(255, 255, 255),
+    Default = Color3.fromRGB(0, 255, 25),
     Title = "Visibility Outline Color",
     Transparency = 0,
     Resizable = true,
 })
 
 VisualHighlightCustomizationGroupBox:AddLabel("Global Fill Color"):AddColorPicker("FillHighlightColor", {
-    Default = Color3.fromRGB(255, 255, 255),
+    Default = Color3.fromRGB(200, 0, 0),
     Title = "Global Fill Color",
-    Transparency = 0.8,
+    Transparency = 0.5,
     Resizable = true,
 })
 
 VisualHighlightCustomizationGroupBox:AddLabel("Visibility Fill Color"):AddColorPicker("VisibilityFillHighlightColor", {
-    Default = Color3.fromRGB(255, 255, 255),
+    Default = Color3.fromRGB(0, 255, 25),
     Title = "Visibility Fill Color",
-    Transparency = 0.8,
+    Transparency = 0.5,
     Resizable = true,
 })
 
