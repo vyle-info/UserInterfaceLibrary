@@ -1,0 +1,640 @@
+local ImGui = loadstring(game:HttpGet('https://github.com/depthso/Roblox-ImGUI/raw/main/ImGui.lua'))()
+
+local Players           = game:GetService("Players")
+local RunService        = game:GetService("RunService")
+local UserInputService  = game:GetService("UserInputService")
+
+local LocalPlayer = Players.LocalPlayer
+local Camera      = workspace.CurrentCamera
+
+local Window = ImGui:CreateWindow({
+    Title    = "Box ESP Export",
+    Size     = UDim2.new(0, 500, 0, 600),
+    Position = UDim2.new(0.5, 0, 0, 70),
+    Colors = {
+        Window = { BackgroundColor3 = Color3.fromRGB(10, 10, 10), BackgroundTransparency = 0.1 },
+        Body   = { BackgroundColor3 = Color3.fromRGB(1, 1, 1),   BackgroundTransparency = 0.1 },
+    }
+})
+Window:Center()
+
+local VisualsTab = Window:CreateTab({ Name = "Box Visuals" })
+local ColorsTab  = Window:CreateTab({ Name = "Box Colors"  })
+
+local Config = {
+
+    Enabled           = false,
+    FillEnabled       = false,
+    ShowTeammates     = false,
+    ShowSelf          = false,
+    UseTeamColors     = false,
+    VisibleDetection  = false,
+
+    BoxThickness      = 1.5,
+    BoxTransparency   = 1,
+    EnemyColor        = Color3.fromRGB(255, 0, 0),
+    TeamColor         = Color3.fromRGB(0, 200, 255),
+
+    FillColor         = Color3.fromRGB(255, 0, 0),
+    FillTransparency  = 0.5,
+
+    VisibleColor      = Color3.fromRGB(0, 255, 0),
+    VisibleFillColor  = Color3.fromRGB(0, 255, 0),
+}
+
+local MM2_PLACE_ID   = 142823291
+local MM2_GunColor   = Color3.fromRGB(0, 120, 255)
+local MM2_KnifeColor = Color3.fromRGB(255, 0, 0)
+
+local function GetMM2RoleColor(player)
+    local backpack  = player:FindFirstChild("Backpack")
+    local character = player.Character
+
+    local function hasToolNamed(name)
+        if backpack  and backpack:FindFirstChild(name)  then return true end
+        if character and character:FindFirstChild(name) then return true end
+        return false
+    end
+
+    if hasToolNamed("Gun")   then return MM2_GunColor   end
+    if hasToolNamed("Knife") then return MM2_KnifeColor end
+    return nil
+end
+
+local function ResolveBoxColor(player)
+    if Config.UseTeamColors then
+        if game.PlaceId == MM2_PLACE_ID then
+            local roleColor = GetMM2RoleColor(player)
+            if roleColor then return roleColor end
+        elseif player.Team then
+            return player.TeamColor.Color
+        end
+    end
+    return Config.EnemyColor
+end
+
+local function ResolveFillColor(player)
+    if Config.UseTeamColors then
+        if game.PlaceId == MM2_PLACE_ID then
+            local roleColor = GetMM2RoleColor(player)
+            if roleColor then return roleColor end
+        elseif player.Team then
+            return player.TeamColor.Color
+        end
+    end
+    return Config.FillColor
+end
+
+local VisibilityCache            = {}
+local VISIBILITY_CHECK_INTERVAL  = 0.02
+
+local RAYCAST_OFFSETS = {
+    Vector3.new(0,    2.5, 0),
+    Vector3.new(0,    0,   0), 
+    Vector3.new(0,   -2.0, 0),  
+    Vector3.new( 0.8,  1.0, 0),
+    Vector3.new(-0.8,  1.0, 0), 
+}
+
+local function IsVisible(character)
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then return false end
+
+    local now    = tick()
+    local cached = VisibilityCache[character]
+    if cached and (now - cached.time) < VISIBILITY_CHECK_INTERVAL then
+        return cached.result
+    end
+
+    local rayParams = RaycastParams.new()
+    rayParams.FilterType = Enum.RaycastFilterType.Exclude
+    local ignoreList = { character, Camera }
+    if LocalPlayer.Character then
+        table.insert(ignoreList, LocalPlayer.Character)
+    end
+    rayParams.FilterDescendantsInstances = ignoreList
+
+    local origin = Camera.CFrame.Position
+
+    for _, offset in ipairs(RAYCAST_OFFSETS) do
+        local target    = rootPart.Position + offset
+        local direction = target - origin
+        local result    = workspace:Raycast(origin, direction, rayParams)
+        if result == nil then
+            VisibilityCache[character] = { result = true, time = now }
+            return true
+        end
+    end
+
+    VisibilityCache[character] = { result = false, time = now }
+    return false
+end
+
+Players.PlayerRemoving:Connect(function(player)
+    if player.Character then
+        VisibilityCache[player.Character] = nil
+    end
+end)
+
+local ESPStorage = {}
+
+local function CreateBox()
+    local lines = {}
+    for i = 1, 4 do
+        local line = Drawing.new("Line")
+        line.Visible      = false
+        line.Color        = Config.EnemyColor
+        line.Thickness    = Config.BoxThickness
+        line.Transparency = Config.BoxTransparency
+        line.ZIndex       = 5
+        lines[i] = line
+    end
+
+    local fill = Drawing.new("Square")
+    fill.Visible      = false
+    fill.Color        = Config.FillColor
+    fill.Transparency = Config.FillTransparency
+    fill.Thickness    = 0
+    fill.Filled       = true
+    fill.ZIndex       = 4
+
+    lines.fill = fill
+    return lines
+end
+
+local function RemoveESP(player)
+    local data = ESPStorage[player]
+    if not data then return end
+
+    for i = 1, 4 do
+        if data[i] then data[i]:Remove() end
+    end
+    if data.fill then data.fill:Remove() end
+
+    ESPStorage[player] = nil
+end
+
+local function AddESP(player)
+    if player == LocalPlayer and not Config.ShowSelf then return end
+    if not ESPStorage[player] then
+        ESPStorage[player] = CreateBox()
+    end
+end
+
+local function GetBoundingBox(character)
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if not rootPart or not humanoid then return nil end
+
+    local rootPos    = rootPart.Position
+    local charHeight = 5.5
+    local halfW      = 1.4
+    local bottomY    = rootPos.Y - (charHeight * 0.52)
+    local topY       = rootPos.Y + (charHeight * 0.48)
+
+    local corners3D = {
+        Vector3.new(rootPos.X - halfW, bottomY, rootPos.Z - halfW),
+        Vector3.new(rootPos.X + halfW, bottomY, rootPos.Z - halfW),
+        Vector3.new(rootPos.X + halfW, bottomY, rootPos.Z + halfW),
+        Vector3.new(rootPos.X - halfW, bottomY, rootPos.Z + halfW),
+        Vector3.new(rootPos.X - halfW, topY,    rootPos.Z - halfW),
+        Vector3.new(rootPos.X + halfW, topY,    rootPos.Z - halfW),
+        Vector3.new(rootPos.X + halfW, topY,    rootPos.Z + halfW),
+        Vector3.new(rootPos.X - halfW, topY,    rootPos.Z + halfW),
+    }
+
+    local minX, minY =  math.huge,  math.huge
+    local maxX, maxY = -math.huge, -math.huge
+
+    for _, corner in ipairs(corners3D) do
+        local screenPos, visible = Camera:WorldToViewportPoint(corner)
+        if not visible then return nil end
+        if screenPos.X < minX then minX = screenPos.X end
+        if screenPos.Y < minY then minY = screenPos.Y end
+        if screenPos.X > maxX then maxX = screenPos.X end
+        if screenPos.Y > maxY then maxY = screenPos.Y end
+    end
+
+    return minX, minY, maxX, maxY
+end
+
+local function DrawBox(lines, minX, minY, maxX, maxY)
+    local TL = Vector2.new(minX, minY)
+    local TR = Vector2.new(maxX, minY)
+    local BL = Vector2.new(minX, maxY)
+    local BR = Vector2.new(maxX, maxY)
+    lines[1].From = TL; lines[1].To = TR
+    lines[2].From = BL; lines[2].To = BR
+    lines[3].From = TL; lines[3].To = BL
+    lines[4].From = TR; lines[4].To = BR
+    for i = 1, 4 do lines[i].Visible = true end
+end
+
+local function DrawFill(lines, minX, minY, maxX, maxY)
+    if lines.fill then
+        lines.fill.Position = Vector2.new(minX, minY)
+        lines.fill.Size     = Vector2.new(maxX - minX, maxY - minY)
+        lines.fill.Visible  = true
+    end
+end
+
+local function HideBox(lines)
+    for i = 1, 4 do lines[i].Visible = false end
+    if lines.fill then lines.fill.Visible = false end
+end
+
+local function HideFill(lines)
+    if lines.fill then lines.fill.Visible = false end
+end
+
+RunService.RenderStepped:Connect(function()
+    if not Config.Enabled then
+        for _, lines in pairs(ESPStorage) do HideBox(lines) end
+        return
+    end
+
+    for player, lines in pairs(ESPStorage) do
+        if not player or not player.Parent then
+            RemoveESP(player)
+        else
+            local isSelf = (player == LocalPlayer)
+
+            if isSelf and not Config.ShowSelf then
+                HideBox(lines)
+            else
+                local sameTeam = (not isSelf)
+                    and LocalPlayer.Team ~= nil
+                    and player.Team ~= nil
+                    and LocalPlayer.Team == player.Team
+
+                local shouldShow = isSelf or (not sameTeam or Config.ShowTeammates)
+
+                if not shouldShow then
+                    HideBox(lines)
+                else
+                    local character = player.Character
+                    local humanoid  = character and character:FindFirstChildOfClass("Humanoid")
+                    if not character or not humanoid or humanoid.Health <= 0 then
+                        HideBox(lines)
+                    else
+                        local outlineCol, fillCol
+                        if Config.VisibleDetection and IsVisible(character) then
+                            outlineCol = Config.VisibleColor
+                            fillCol    = Config.VisibleFillColor
+                        else
+                            outlineCol = ResolveBoxColor(player)
+                            fillCol    = ResolveFillColor(player)
+                        end
+
+                        for i = 1, 4 do
+                            lines[i].Color        = outlineCol
+                            lines[i].Transparency = Config.BoxTransparency
+                            lines[i].Thickness    = Config.BoxThickness
+                        end
+
+                        if lines.fill then
+                            lines.fill.Color        = fillCol
+                            lines.fill.Transparency = Config.FillTransparency
+                        end
+
+                        local minX, minY, maxX, maxY = GetBoundingBox(character)
+                        if minX then
+                            DrawBox(lines, minX, minY, maxX, maxY)
+                            if Config.FillEnabled then
+                                DrawFill(lines, minX, minY, maxX, maxY)
+                            else
+                                HideFill(lines)
+                            end
+                        else
+                            HideBox(lines)
+                        end
+                    end
+                end
+            end
+        end
+    end
+end)
+
+for _, player in ipairs(Players:GetPlayers()) do
+    AddESP(player)
+end
+
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function()
+        if not ESPStorage[player] then AddESP(player) end
+    end)
+    AddESP(player)
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+    RemoveESP(player)
+end)
+
+local function HSVtoRGB(h, s, v)
+    local i = math.floor(h * 6)
+    local f = h * 6 - i
+    local p = v * (1 - s)
+    local q = v * (1 - f * s)
+    local t = v * (1 - (1 - f) * s)
+    i = i % 6
+    if     i == 0 then return v, t, p
+    elseif i == 1 then return q, v, p
+    elseif i == 2 then return p, v, t
+    elseif i == 3 then return p, q, v
+    elseif i == 4 then return t, p, v
+    elseif i == 5 then return v, p, q
+    end
+end
+
+local function RGBtoHSV(r, g, b)
+    r, g, b = r / 255, g / 255, b / 255
+    local max, min = math.max(r, g, b), math.min(r, g, b)
+    local h, s, v = 0, 0, max
+    local d = max - min
+    if max ~= 0 then s = d / max end
+    if max ~= min then
+        if     max == r then h = (g - b) / d + (g < b and 6 or 0)
+        elseif max == g then h = (b - r) / d + 2
+        elseif max == b then h = (r - g) / d + 4
+        end
+        h = h / 6
+    end
+    return h, s, v
+end
+
+-- Outline
+local R, G, B      = 255, 0, 0
+local H, S, V      = 0, 1, 1
+local syncOutline  = false
+
+-- Fill
+local FR, FG, FB   = 255, 0, 0
+local FH, FS, FV   = 0, 1, 1
+local syncFill     = false
+
+-- Visible outline
+local VR, VG, VB   = 0, 255, 0
+local VH, VS, VV   = 0.33, 1, 1
+local syncVis      = false
+
+-- Visible fill
+local VFR, VFG, VFB = 0, 255, 0
+local VFH, VFS, VFV = 0.33, 1, 1
+local syncVisFill   = false
+
+local function ApplyOutlineColor()   Config.EnemyColor      = Color3.fromRGB(R, G, B)         end
+local function ApplyFillColor()      Config.FillColor       = Color3.fromRGB(FR, FG, FB)      end
+local function ApplyVisibleColor()   Config.VisibleColor    = Color3.fromRGB(VR, VG, VB)      end
+local function ApplyVisibleFill()    Config.VisibleFillColor= Color3.fromRGB(VFR, VFG, VFB)  end
+
+local function OnOutlineHSV()
+    if syncOutline then return end
+    syncOutline = true
+    local r, g, b = HSVtoRGB(H, S, V)
+    R, G, B = math.floor(r*255), math.floor(g*255), math.floor(b*255)
+    syncOutline = false
+    ApplyOutlineColor()
+end
+local function OnOutlineRGB()
+    if syncOutline then return end
+    syncOutline = true
+    H, S, V = RGBtoHSV(R, G, B)
+    syncOutline = false
+    ApplyOutlineColor()
+end
+
+local function OnFillHSV()
+    if syncFill then return end
+    syncFill = true
+    local r, g, b = HSVtoRGB(FH, FS, FV)
+    FR, FG, FB = math.floor(r*255), math.floor(g*255), math.floor(b*255)
+    syncFill = false
+    ApplyFillColor()
+end
+local function OnFillRGB()
+    if syncFill then return end
+    syncFill = true
+    FH, FS, FV = RGBtoHSV(FR, FG, FB)
+    syncFill = false
+    ApplyFillColor()
+end
+
+local function OnVisHSV()
+    if syncVis then return end
+    syncVis = true
+    local r, g, b = HSVtoRGB(VH, VS, VV)
+    VR, VG, VB = math.floor(r*255), math.floor(g*255), math.floor(b*255)
+    syncVis = false
+    ApplyVisibleColor()
+end
+local function OnVisRGB()
+    if syncVis then return end
+    syncVis = true
+    VH, VS, VV = RGBtoHSV(VR, VG, VB)
+    syncVis = false
+    ApplyVisibleColor()
+end
+
+local function OnVisFillHSV()
+    if syncVisFill then return end
+    syncVisFill = true
+    local r, g, b = HSVtoRGB(VFH, VFS, VFV)
+    VFR, VFG, VFB = math.floor(r*255), math.floor(g*255), math.floor(b*255)
+    syncVisFill = false
+    ApplyVisibleFill()
+end
+local function OnVisFillRGB()
+    if syncVisFill then return end
+    syncVisFill = true
+    VFH, VFS, VFV = RGBtoHSV(VFR, VFG, VFB)
+    syncVisFill = false
+    ApplyVisibleFill()
+end
+
+ApplyOutlineColor()
+ApplyFillColor()
+ApplyVisibleColor()
+ApplyVisibleFill()
+
+local BoxHeader = VisualsTab:CollapsingHeader({
+    Title = "Global Box Visuals",
+    Open  = true,
+})
+
+BoxHeader:Checkbox({
+    Label    = "Global Visual Boxes",
+    Value    = Config.Enabled,
+    Callback = function(_, value)
+        Config.Enabled = value
+        if not value then
+            for _, lines in pairs(ESPStorage) do HideBox(lines) end
+        end
+    end,
+})
+
+BoxHeader:Checkbox({
+    Label    = "Fill Visual Boxes",
+    Value    = Config.FillEnabled,
+    Callback = function(_, value)
+        Config.FillEnabled = value
+        if not value then
+            for _, lines in pairs(ESPStorage) do HideFill(lines) end
+        end
+    end,
+})
+
+BoxHeader:Checkbox({
+    Label    = "Visible Detection",
+    Value    = Config.VisibleDetection,
+    Callback = function(_, value) Config.VisibleDetection = value end,
+})
+
+BoxHeader:Checkbox({
+    Label    = "Show Teammates",
+    Value    = Config.ShowTeammates,
+    Callback = function(_, value) Config.ShowTeammates = value end,
+})
+
+BoxHeader:Checkbox({
+    Label    = "Team Colors",
+    Value    = Config.UseTeamColors,
+    Callback = function(_, value) Config.UseTeamColors = value end,
+})
+
+BoxHeader:Checkbox({
+    Label    = "Show Self",
+    Value    = Config.ShowSelf,
+    Callback = function(_, value)
+        Config.ShowSelf = value
+        if value then AddESP(LocalPlayer)
+        else RemoveESP(LocalPlayer) end
+    end,
+})
+
+local ColorsHeader = ColorsTab:CollapsingHeader({
+    Title = "Global Box Colors",
+    Open  = true,
+})
+
+local OutlineHeader = ColorsHeader:CollapsingHeader({ Title = "Global Box Colors", Open = true })
+
+OutlineHeader:ProgressSlider({
+    Label = "RGB [R,1]", Format = "R: %.0f/255", Value = R,
+    MinValue = 0, MaxValue = 255, ReadOnly = false,
+    Callback = function(_, v) R = math.floor(v); OnOutlineRGB() end,
+})
+OutlineHeader:ProgressSlider({
+    Label = "RGB [G,2]", Format = "G: %.0f/255", Value = G,
+    MinValue = 0, MaxValue = 255, ReadOnly = false,
+    Callback = function(_, v) G = math.floor(v); OnOutlineRGB() end,
+})
+OutlineHeader:ProgressSlider({
+    Label = "RGB [B,3]", Format = "B: %.0f/255", Value = B,
+    MinValue = 0, MaxValue = 255, ReadOnly = false,
+    Callback = function(_, v) B = math.floor(v); OnOutlineRGB() end,
+})
+OutlineHeader:ProgressSlider({
+    Label = "[Hue]", Format = "H: %.0f/360", Value = 0,
+    MinValue = 0, MaxValue = 360, ReadOnly = false,
+    Callback = function(_, v) H = v / 360; OnOutlineHSV() end,
+})
+OutlineHeader:ProgressSlider({
+    Label = "[Thickness]", Format = "T: %.1f", Value = 1.5,
+    MinValue = 0.5, MaxValue = 5, ReadOnly = false,
+    Callback = function(_, v)
+        v = math.round(v * 2) / 2
+        Config.BoxThickness = v
+        for _, lines in pairs(ESPStorage) do
+            for i = 1, 4 do lines[i].Thickness = v end
+        end
+    end,
+})
+OutlineHeader:ProgressSlider({
+    Label = "[Transparency]", Format = "T: %.0f/100", Value = 100,
+    MinValue = 0, MaxValue = 100, ReadOnly = false,
+    Callback = function(_, v)
+        Config.BoxTransparency = v / 100
+        for _, lines in pairs(ESPStorage) do
+            for i = 1, 4 do lines[i].Transparency = Config.BoxTransparency end
+        end
+    end,
+})
+
+local FillHeader = ColorsHeader:CollapsingHeader({ Title = "Global Filled Box Colors", Open = true })
+
+FillHeader:ProgressSlider({
+    Label = "Fill RGB [R,1]", Format = "R: %.0f/255", Value = FR,
+    MinValue = 0, MaxValue = 255, ReadOnly = false,
+    Callback = function(_, v) FR = math.floor(v); OnFillRGB() end,
+})
+FillHeader:ProgressSlider({
+    Label = "Fill RGB [G,2]", Format = "G: %.0f/255", Value = FG,
+    MinValue = 0, MaxValue = 255, ReadOnly = false,
+    Callback = function(_, v) FG = math.floor(v); OnFillRGB() end,
+})
+FillHeader:ProgressSlider({
+    Label = "Fill RGB [B,3]", Format = "B: %.0f/255", Value = FB,
+    MinValue = 0, MaxValue = 255, ReadOnly = false,
+    Callback = function(_, v) FB = math.floor(v); OnFillRGB() end,
+})
+FillHeader:ProgressSlider({
+    Label = "Fill [Hue]", Format = "H: %.0f/360", Value = 0,
+    MinValue = 0, MaxValue = 360, ReadOnly = false,
+    Callback = function(_, v) FH = v / 360; OnFillHSV() end,
+})
+FillHeader:ProgressSlider({
+    Label = "Fill [Transparency]", Format = "T: %.0f/100", Value = 50,
+    MinValue = 0, MaxValue = 100, ReadOnly = false,
+    Callback = function(_, v)
+        Config.FillTransparency = v / 100
+        for _, lines in pairs(ESPStorage) do
+            if lines.fill then lines.fill.Transparency = Config.FillTransparency end
+        end
+    end,
+})
+
+local VisHeader = ColorsHeader:CollapsingHeader({ Title = "Visible Detection Colors", Open = true })
+
+VisHeader:Label({ Text = "Visible Box Outline Color" })
+VisHeader:ProgressSlider({
+    Label = "Visible RGB [R,1]", Format = "R: %.0f/255", Value = VR,
+    MinValue = 0, MaxValue = 255, ReadOnly = false,
+    Callback = function(_, v) VR = math.floor(v); OnVisRGB() end,
+})
+VisHeader:ProgressSlider({
+    Label = "Visible RGB [G,2]", Format = "G: %.0f/255", Value = VG,
+    MinValue = 0, MaxValue = 255, ReadOnly = false,
+    Callback = function(_, v) VG = math.floor(v); OnVisRGB() end,
+})
+VisHeader:ProgressSlider({
+    Label = "Visible RGB [B,3]", Format = "B: %.0f/255", Value = VB,
+    MinValue = 0, MaxValue = 255, ReadOnly = false,
+    Callback = function(_, v) VB = math.floor(v); OnVisRGB() end,
+})
+VisHeader:ProgressSlider({
+    Label = "Visible [Hue]", Format = "H: %.0f/360", Value = 120,
+    MinValue = 0, MaxValue = 360, ReadOnly = false,
+    Callback = function(_, v) VH = v / 360; OnVisHSV() end,
+})
+
+VisHeader:Label({ Text = "Visible Fill Color" })
+VisHeader:ProgressSlider({
+    Label = "Visible Fill RGB [R,1]", Format = "R: %.0f/255", Value = VFR,
+    MinValue = 0, MaxValue = 255, ReadOnly = false,
+    Callback = function(_, v) VFR = math.floor(v); OnVisFillRGB() end,
+})
+VisHeader:ProgressSlider({
+    Label = "Visible Fill RGB [G,2]", Format = "G: %.0f/255", Value = VFG,
+    MinValue = 0, MaxValue = 255, ReadOnly = false,
+    Callback = function(_, v) VFG = math.floor(v); OnVisFillRGB() end,
+})
+VisHeader:ProgressSlider({
+    Label = "Visible Fill RGB [B,3]", Format = "B: %.0f/255", Value = VFB,
+    MinValue = 0, MaxValue = 255, ReadOnly = false,
+    Callback = function(_, v) VFB = math.floor(v); OnVisFillRGB() end,
+})
+VisHeader:ProgressSlider({
+    Label = "Visible Fill [Hue]", Format = "H: %.0f/360", Value = 120,
+    MinValue = 0, MaxValue = 360, ReadOnly = false,
+    Callback = function(_, v) VFH = v / 360; OnVisFillHSV() end,
+})
