@@ -1,129 +1,49 @@
-local Players            = game:GetService("Players")
-local RunService         = game:GetService("RunService")
-local UserInputService   = game:GetService("UserInputService")
-local Workspace          = game:GetService("Workspace")
-local Camera             = Workspace.CurrentCamera
 
-local LocalPlayer        = Players.LocalPlayer
-local Mouse              = LocalPlayer:GetMouse()
 
-local State = {
-    Enabled   = false,
-    Delay     = 10,
-    Mode      = "Default",   -- "Default" | "Rapid" | "Hold"
-    BodyParts = { ["Head"] = true },
-    LastShot  = 0,
-    Holding   = false,
+--// Services
+local Players             = game:GetService("Players")
+local RunService          = game:GetService("RunService")
+local Workspace           = game:GetService("Workspace")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+local LocalPlayer = Players.LocalPlayer
+local Mouse       = LocalPlayer:GetMouse()
+
+--// UI Library + addons
+local repo = "https://raw.githubusercontent.com/deividcomsono/Obsidian/main/"
+local Library      = loadstring(game:HttpGet(repo .. "Library.lua"))()
+local ThemeManager = loadstring(game:HttpGet(repo .. "addons/ThemeManager.lua"))()
+local SaveManager  = loadstring(game:HttpGet(repo .. "addons/SaveManager.lua"))()
+
+local Window = Library:CreateWindow({
+    Title      = "Venice",
+    Footer     = "universal triggerbot",
+    Center     = true,
+    AutoShow   = true,
+    NotifySide = "Right",
+})
+
+local Tabs = {
+    Combat   = Window:AddTab("Combat", "crosshair"),
+    Settings = Window:AddTab("Settings", "settings"),
 }
 
-local BodyPartMap = {
-    ["Head"]       = { "head" },
-    ["Torso"]      = { "torso", "uppertorso", "lowertorso", "chest", "upperchest" },
-    ["Left Arm"]   = { "leftarm", "left arm", "leftupperarm", "leftlowerarm" },
-    ["Right Arm"]  = { "rightarm", "right arm", "rightupperarm", "rightlowerarm" },
-    ["Left Leg"]   = { "leftleg", "left leg", "leftupperleg", "leftlowerleg" },
-    ["Right Leg"]  = { "rightleg", "right leg", "rightupperleg", "rightlowerleg" },
-}
+local CombatTab = Tabs.Combat
 
-local function isBodyPartEnabled(name)
-    local lower = string.lower(name)
-    for label, keywords in pairs(BodyPartMap) do
-        if State.BodyParts[label] then
-            for _, kw in ipairs(keywords) do
-                if string.find(lower, kw, 1, true) then
-                    return true
-                end
-            end
-        end
-    end
-    return false
-end
+--=============================================================
+--  UI  (your layout, wired up)
+--=============================================================
+local TriggerbotGroupBox = CombatTab:AddGroupbox({
+    Side = "Right",
+    Name = "Triggerbot (v3)",
+})
 
-local function getTargetPart()
-    local cam = Workspace.CurrentCamera
-    if not cam then return nil end
-
-    local mousePos = UserInputService:GetMouseLocation()
-    local ray = cam:ViewportPointToRay(mousePos.X, mousePos.Y)
-
-    local params = RaycastParams.new()
-    params.FilterType = Enum.RaycastFilterType.Exclude
-    params.FilterDescendantsInstances = { LocalPlayer.Character, cam }
-    params.IgnoreWater = true
-
-    local result = Workspace:Raycast(ray.Origin, ray.Direction * 2000, params)
-    if not result or not result.Instance then return nil end
-
-    local part = result.Instance
-    local model = part:FindFirstAncestorOfClass("Model")
-
-    if not model then return nil end
-    local owner = Players:GetPlayerFromCharacter(model)
-    if not owner or owner == LocalPlayer then return nil end
-
-    if not isBodyPartEnabled(part.Name) then return nil end
-
-    return part, owner
-end
-
-local function fireOnce()
-    pcall(function() mouse1click() end)
-end
-
-RunService.RenderStepped:Connect(function()
-    if not State.Enabled then
-        if State.Holding then
-            State.Holding = false
-            pcall(function() mouse1up() end)
-        end
-        return
-    end
-
-    local part = getTargetPart()
-    local now = tick() * 1000
-
-    if State.Mode == "Hold" then
-        if part then
-            if not State.Holding then
-                pcall(function() mouse1down() end)
-                State.Holding = true
-            end
-        else
-            if State.Holding then
-                pcall(function() mouse1up() end)
-                State.Holding = false
-            end
-        end
-        return
-    end
-
-    if not part then return end
-    if (now - State.LastShot) < State.Delay then return end
-
-    if State.Mode == "Rapid" then
-        fireOnce()
-        State.LastShot = now
-    else
-        if not UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
-            fireOnce()
-            State.LastShot = now
-        end
-    end
-end)
-
-TriggerbotGroupBox:AddToggle("TriggerbotToggle1", {
+local TriggerbotToggle = TriggerbotGroupBox:AddToggle("TriggerbotToggle1", {
     Text = "Triggerbot",
     Default = false,
 })
-TriggerbotGroupBox:AddToggle("TriggerbotToggle1").OnChanged:Connect(function(v)
-    State.Enabled = v
-    if not v and State.Holding then
-        State.Holding = false
-        pcall(function() mouse1up() end)
-    end
-end)
 
-TriggerbotGroupBox:AddSlider("TriggerBotDelay", {
+local TriggerBotDelay = TriggerbotGroupBox:AddSlider("TriggerBotDelay", {
     Text = "Triggerbot Delay",
     Default = 10,
     Min = 0,
@@ -131,26 +51,16 @@ TriggerbotGroupBox:AddSlider("TriggerBotDelay", {
     Rounding = 1,
     Suffix = "ms",
 })
-TriggerbotGroupBox:AddSlider("TriggerBotDelay").OnChanged:Connect(function(v)
-    State.Delay = v
-end)
 
-TriggerbotGroupBox:AddDropdown("ModeSelection", {
+local ModeSelection = TriggerbotGroupBox:AddDropdown("ModeSelection", {
     Text = "Triggerbot Mode",
     Values = { "Default", "Rapid", "Hold" },
     Multi = false,
     Searchable = true,
     Default = { "Default" },
 })
-TriggerbotGroupBox:AddDropdown("ModeSelection").OnChanged:Connect(function(v)
-    State.Mode = v or "Default"
-    if State.Holding and State.Mode ~= "Hold" then
-        State.Holding = false
-        pcall(function() mouse1up() end)
-    end
-end)
 
-TriggerbotGroupBox:AddDropdown("BodyPartSelection", {
+local BodyPartSelection = TriggerbotGroupBox:AddDropdown("BodyPartSelection", {
     Text = "Targeted Body Parts",
     Values = { "Head", "Torso", "Left Arm", "Right Arm", "Left Leg", "Right Leg" },
     Multi = true,
@@ -158,9 +68,232 @@ TriggerbotGroupBox:AddDropdown("BodyPartSelection", {
     Visible = true,
     Default = { "Head" },
 })
-TriggerbotGroupBox:AddDropdown("BodyPartSelection").OnChanged:Connect(function(v)
-    State.BodyParts = {}
-    for _, name in ipairs(v) do
-        State.BodyParts[name] = true
+
+-- extras that make it genuinely universal
+local TeamCheck = TriggerbotGroupBox:AddToggle("TeamCheck", {
+    Text = "Team Check",
+    Default = false,
+    Tooltip = "Skip players on your own team",
+})
+
+local WallCheck = TriggerbotGroupBox:AddToggle("WallCheck", {
+    Text = "Wall Check",
+    Default = false,
+    Tooltip = "Only fire when the target is not behind a wall",
+})
+
+--=============================================================
+--  CONFIG
+--=============================================================
+local Config = {
+    Enabled   = false,
+    Delay     = 10,          -- ms
+    Mode      = "Default",
+    BodyParts = { Head = true },
+    TeamCheck = false,
+    WallCheck = false,
+}
+
+local function toSet(value)
+    local set = {}
+    if type(value) == "table" then
+        for k, v in pairs(value) do
+            if type(k) == "number" then set[v] = true
+            elseif v then set[k] = true end
+        end
+    elseif type(value) == "string" then
+        set[value] = true
+    end
+    return set
+end
+
+local function firstOf(value)
+    if type(value) == "table" then
+        for k, v in pairs(value) do
+            if type(k) == "number" then return v end
+            if v then return k end
+        end
+        return nil
+    end
+    return value
+end
+
+--=============================================================
+--  TARGET DETECTION
+--=============================================================
+-- Map any part name (R6, R15, custom) to a selectable body category
+local function getCategory(name)
+    local n = name:lower():gsub("%s+", "")
+    if n:find("head") then return "Head" end
+    if n:find("torso") or n:find("chest") then return "Torso" end
+    if n:find("arm") then
+        if n:find("left")  then return "Left Arm"  end
+        if n:find("right") then return "Right Arm" end
+    end
+    if n:find("leg") then
+        if n:find("left")  then return "Left Leg"  end
+        if n:find("right") then return "Right Leg" end
+    end
+    return nil
+end
+
+local includeParams = RaycastParams.new()
+includeParams.FilterType = Enum.RaycastFilterType.Include
+includeParams.IgnoreWater = true
+
+local wallParams = RaycastParams.new()
+wallParams.FilterType = Enum.RaycastFilterType.Exclude
+wallParams.IgnoreWater = true
+
+-- Returns the part under the crosshair + its character (or nil)
+local function getTarget()
+    local parts, partToChar = {}, {}
+    local selected = Config.BodyParts
+
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer then
+            local char = plr.Character
+            if char then
+                local hum = char:FindFirstChildOfClass("Humanoid")
+                local isEnemy = true
+                if Config.TeamCheck and LocalPlayer.Team and plr.Team == LocalPlayer.Team then
+                    isEnemy = false
+                end
+                if hum and hum.Health > 0 and isEnemy then
+                    for _, d in ipairs(char:GetDescendants()) do
+                        if d:IsA("BasePart") then
+                            local cat = getCategory(d.Name)
+                            if cat and selected[cat] then
+                                parts[#parts + 1] = d
+                                partToChar[d] = char
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    if #parts == 0 then return nil end
+
+    local ray = Mouse.UnitRay
+    if not ray then return nil end
+
+    includeParams.FilterDescendantsInstances = parts
+    local result = Workspace:Raycast(ray.Origin, ray.Direction * 1000, includeParams)
+    if result then
+        return result.Instance, partToChar[result.Instance]
+    end
+    return nil
+end
+
+local function isVisible(part, char)
+    local ray = Mouse.UnitRay
+    if not ray then return false end
+    wallParams.FilterDescendantsInstances = { LocalPlayer.Character }
+    local result = Workspace:Raycast(ray.Origin, ray.Direction * 1000, wallParams)
+    if result then
+        return result.Instance == part or result.Instance:IsDescendantOf(char)
+    end
+    return false
+end
+
+--=============================================================
+--  FIRING
+--=============================================================
+local function press()
+    VirtualInputManager:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, true, game, 1)
+end
+local function release()
+    VirtualInputManager:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, false, game, 1)
+end
+local function click()
+    press()
+    release()
+end
+
+--=============================================================
+--  MAIN LOOP
+--=============================================================
+local currentTarget = nil
+local confirmTime   = 0
+local firedForTarget = false
+local holding       = false
+local lastFire      = 0
+
+RunService.RenderStepped:Connect(function()
+    if not Config.Enabled then
+        if holding then release(); holding = false end
+        currentTarget = nil
+        return
+    end
+
+    local part, char = getTarget()
+
+    if part and Config.WallCheck and not isVisible(part, char) then
+        part, char = nil, nil
+    end
+
+    if part and char then
+        -- new target -> reset confirmation timer
+        if currentTarget ~= char then
+            currentTarget   = char
+            confirmTime     = tick()
+            firedForTarget  = false
+            if holding then release(); holding = false end
+        end
+
+        local elapsedMs = (tick() - confirmTime) * 1000
+        if elapsedMs >= Config.Delay then
+            if Config.Mode == "Default" then
+                if not firedForTarget then
+                    click()
+                    firedForTarget = true
+                end
+            elseif Config.Mode == "Rapid" then
+                local interval = math.max(Config.Delay, 5) / 1000
+                if (tick() - lastFire) >= interval then
+                    click()
+                    lastFire = tick()
+                end
+            elseif Config.Mode == "Hold" then
+                if not holding then
+                    press()
+                    holding = true
+                end
+            end
+        end
+    else
+        currentTarget  = nil
+        firedForTarget = false
+        if holding then release(); holding = false end
     end
 end)
+
+--=============================================================
+--  WIRING
+--=============================================================
+TriggerbotToggle:OnChanged(function(v) Config.Enabled = v end)
+TriggerBotDelay:OnChanged(function(v) Config.Delay = v end)
+ModeSelection:OnChanged(function(v) Config.Mode = firstOf(v) or "Default" end)
+BodyPartSelection:OnChanged(function(v) Config.BodyParts = toSet(v) end)
+TeamCheck:OnChanged(function(v) Config.TeamCheck = v end)
+WallCheck:OnChanged(function(v) Config.WallCheck = v end)
+
+--=============================================================
+--  ADDONS
+--=============================================================
+ThemeManager:SetLibrary(Library)
+SaveManager:SetLibrary(Library)
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({})
+ThemeManager:SetFolder("Venice")
+SaveManager:SetFolder("Venice/UniversalTriggerbot")
+SaveManager:BuildConfigSection(Tabs.Settings)
+ThemeManager:ApplyToTab(Tabs.Settings)
+
+Library:OnUnload(function()
+    if holding then release() end
+end)
+
+Library:Notify({ Title = "Venice", Description = "Universal Triggerbot loaded", Time = 4 })
