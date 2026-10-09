@@ -96,22 +96,30 @@ local ThemeManager = {
         ["Void"] = {
             10,
             { FontColor = "f5f5f5", MainColor = "050505", AccentColor = "ffffff", BackgroundColor = "000000", OutlineColor = "111111", BackgroundImage = "" },
-		["pride"] = {
-            11,
-            { FontColor = "f5f5f5", MainColor = "050505", AccentColor = "ffffff", BackgroundColor = "000000", OutlineColor = "111111", BackgroundImage = "" },
+        },
+		        ["Arkhyz Night"] = {
+            132,
+            { FontColor = "e6eefb", MainColor = "0b1220", AccentColor = "7aa2ff", BackgroundColor = "070c16", OutlineColor = "16213a", BackgroundImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Milky-Way.jpg/1920px-Milky-Way.jpg" },
+        },
+        ["Carina Nebula"] = {
+            133,
+            { FontColor = "f7ece4", MainColor = "150f0d", AccentColor = "ff9a5c", BackgroundColor = "0f0a08", OutlineColor = "2a1d18", BackgroundImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Carina_Nebula_in_visible_light_%28captured_by_the_Hubble_Space_Telescope%29.jpg/1920px-Carina_Nebula_in_visible_light_%28captured_by_the_Hubble_Space_Telescope%29.jpg" },
+        },
+        ["Chapel Stars"] = {
+            134,
+            { FontColor = "ece6f7", MainColor = "100d1c", AccentColor = "b79df0", BackgroundColor = "0a0813", OutlineColor = "221c3a", BackgroundImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Savault_Chapel_Under_Milky_Way_BLS.jpg/1920px-Savault_Chapel_Under_Milky_Way_BLS.jpg" },
+        },
+        ["Pedra Azul"] = {
+            135,
+            { FontColor = "e3f4f3", MainColor = "09161a", AccentColor = "5de4c7", BackgroundColor = "060e11", OutlineColor = "123038", BackgroundImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Pedra_Azul_Milky_Way.jpg/1920px-Pedra_Azul_Milky_Way.jpg" },
+        },
+        ["Guisard Sky"] = {
+            136,
+            { FontColor = "e8ecf2", MainColor = "12161d", AccentColor = "f08fb0", BackgroundColor = "0c0f14", OutlineColor = "232a36", BackgroundImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Guisard_-_Milky_Way.jpg/1920px-Guisard_-_Milky_Way.jpg" },
         },
     }
 }
 
-local RunService = game:GetService("RunService")
-
-local SPEED = 0.2 -- full rainbow cycles per second
-
-RunService.Heartbeat:Connect(function()
-    local hue = (os.clock() * SPEED) % 1
-    BuiltInThemes["pride"][2].AccentColor = Color3.fromHSV(hue, 1, 1):ToHex()
-end)
-				
 function ThemeManager:SetLibrary(Library)
     ThemeManager.Library = Library
 end
