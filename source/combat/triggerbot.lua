@@ -1,37 +1,18 @@
-
-
 --// Services
 local Players             = game:GetService("Players")
 local RunService          = game:GetService("RunService")
 local Workspace           = game:GetService("Workspace")
+local GuiService          = game:GetService("GuiService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 
 local LocalPlayer = Players.LocalPlayer
 local Mouse       = LocalPlayer:GetMouse()
 
---// UI Library + addons
-local repo = "https://raw.githubusercontent.com/deividcomsono/Obsidian/main/"
-local Library      = loadstring(game:HttpGet(repo .. "Library.lua"))()
-local ThemeManager = loadstring(game:HttpGet(repo .. "addons/ThemeManager.lua"))()
-local SaveManager  = loadstring(game:HttpGet(repo .. "addons/SaveManager.lua"))()
-
-local Window = Library:CreateWindow({
-    Title      = "Venice",
-    Footer     = "universal triggerbot",
-    Center     = true,
-    AutoShow   = true,
-    NotifySide = "Right",
-})
-
-local Tabs = {
-    Combat   = Window:AddTab("Combat", "crosshair"),
-    Settings = Window:AddTab("Settings", "settings"),
-}
-
-local CombatTab = Tabs.Combat
+--// CombatTab must already exist
+local CombatTab = CombatTab or (getgenv and getgenv().CombatTab)
 
 --=============================================================
---  UI  (your layout, wired up)
+--  UI  (exactly your elements)
 --=============================================================
 local TriggerbotGroupBox = CombatTab:AddGroupbox({
     Side = "Right",
@@ -69,29 +50,14 @@ local BodyPartSelection = TriggerbotGroupBox:AddDropdown("BodyPartSelection", {
     Default = { "Head" },
 })
 
--- extras that make it genuinely universal
-local TeamCheck = TriggerbotGroupBox:AddToggle("TeamCheck", {
-    Text = "Team Check",
-    Default = false,
-    Tooltip = "Skip players on your own team",
-})
-
-local WallCheck = TriggerbotGroupBox:AddToggle("WallCheck", {
-    Text = "Wall Check",
-    Default = false,
-    Tooltip = "Only fire when the target is not behind a wall",
-})
-
 --=============================================================
 --  CONFIG
 --=============================================================
 local Config = {
     Enabled   = false,
-    Delay     = 10,          -- ms
+    Delay     = 10,
     Mode      = "Default",
     BodyParts = { Head = true },
-    TeamCheck = false,
-    WallCheck = false,
 }
 
 local function toSet(value)
@@ -119,9 +85,8 @@ local function firstOf(value)
 end
 
 --=============================================================
---  TARGET DETECTION
+--  BODY-PART MATCHING  (R6 / R15 / custom)
 --=============================================================
--- Map any part name (R6, R15, custom) to a selectable body category
 local function getCategory(name)
     local n = name:lower():gsub("%s+", "")
     if n:find("head") then return "Head" end
@@ -137,34 +102,119 @@ local function getCategory(name)
     return nil
 end
 
+--=============================================================
+--  GEOMETRY HELPERS
+--=============================================================
+local function cross(a, b, p)
+    return (b.X - a.X) * (p.Y - a.Y) - (b.Y - a.Y) * (p.X - a.X)
+end
+
+-- Andrew's monotone chain -> convex hull
+local function convexHull(points)
+    local n = #points
+    if n < 3 then return points end
+    table.sort(points, function(a, b)
+        if a.X == b.X then return a.Y < b.Y end
+        return a.X < b.X
+    end)
+
+    local hull = {}
+    for i = 1, n do
+        while #hull >= 2 and cross(hull[#hull - 1], hull[#hull], points[i]) <= 0 do
+            table.remove(hull)
+        end
+        hull[#hull + 1] = points[i]
+    end
+    local lower = #hull + 1
+    for i = n - 1, 1, -1 do
+        while #hull >= lower and cross(hull[#hull - 1], hull[#hull], points[i]) <= 0 do
+            table.remove(hull)
+        end
+        hull[#hull + 1] = points[i]
+    end
+    table.remove(hull)
+    return hull
+end
+
+-- Push hull outward by a few px so edge pixels still register
+local function expandHull(hull, px)
+    local n = #hull
+    if n < 3 then return hull end
+    local cx, cy = 0, 0
+    for _, p in ipairs(hull) do cx = cx + p.X; cy = cy + p.Y end
+    cx, cy = cx / n, cy / n
+    local out = table.create(n)
+    for i, p in ipairs(hull) do
+        local d = Vector2.new(p.X - cx, p.Y - cy)
+        local m = d.Magnitude
+        out[i] = (m > 0) and (p + d / m * px) or p
+    end
+    return out
+end
+
+-- Convex point-in-polygon (orientation-agnostic)
+local function pointInHull(pt, hull)
+    local n = #hull
+    if n < 3 then return false end
+    local pos, neg = false, false
+    for i = 1, n do
+        local c = cross(hull[i], hull[i % n + 1], pt)
+        if c > 0 then pos = true end
+        if c < 0 then neg = true end
+        if pos and neg then return false end
+    end
+    return true
+end
+
+local function projectHull(part, cam)
+    local cf, size = part.CFrame, part.Size
+    local hx, hy, hz = size.X * 0.5, size.Y * 0.5, size.Z * 0.5
+    local pts = {}
+    for sx = -1, 1, 2 do
+        for sy = -1, 1, 2 do
+            for sz = -1, 1, 2 do
+                local world = cf * Vector3.new(hx * sx, hy * sy, hz * sz)
+                local sp, onScreen = cam:WorldToViewportPoint(world)
+                if onScreen and sp.Z > 0 then
+                    pts[#pts + 1] = Vector2.new(sp.X, sp.Y)
+                end
+            end
+        end
+    end
+    if #pts < 3 then return nil end
+    return expandHull(convexHull(pts), 1.5)
+end
+
+--=============================================================
+--  TARGET ACQUISITION
+--=============================================================
 local includeParams = RaycastParams.new()
-includeParams.FilterType = Enum.RaycastFilterType.Include
+includeParams.FilterType  = Enum.RaycastFilterType.Include
 includeParams.IgnoreWater = true
 
-local wallParams = RaycastParams.new()
-wallParams.FilterType = Enum.RaycastFilterType.Exclude
-wallParams.IgnoreWater = true
+local function getMouseViewport()
+    local inset = GuiService:GetGuiInset()
+    return Vector2.new(Mouse.X, Mouse.Y) - inset
+end
 
--- Returns the part under the crosshair + its character (or nil)
 local function getTarget()
-    local parts, partToChar = {}, {}
+    local cam = Workspace.CurrentCamera
+    if not cam then return nil end
+
     local selected = Config.BodyParts
+    local candidates, partToChar = {}, {}
 
     for _, plr in ipairs(Players:GetPlayers()) do
         if plr ~= LocalPlayer then
             local char = plr.Character
             if char then
                 local hum = char:FindFirstChildOfClass("Humanoid")
-                local isEnemy = true
-                if Config.TeamCheck and LocalPlayer.Team and plr.Team == LocalPlayer.Team then
-                    isEnemy = false
-                end
-                if hum and hum.Health > 0 and isEnemy then
+                if hum and hum.Health > 0 then
                     for _, d in ipairs(char:GetDescendants()) do
                         if d:IsA("BasePart") then
                             local cat = getCategory(d.Name)
                             if cat and selected[cat] then
-                                parts[#parts + 1] = d
+                                candidates[#candidates + 1] = d
                                 partToChar[d] = char
                             end
                         end
@@ -173,29 +223,36 @@ local function getTarget()
             end
         end
     end
+    if #candidates == 0 then return nil end
 
-    if #parts == 0 then return nil end
+    local mouseVP = getMouseViewport()
+    local camPos   = cam.CFrame.Position
+    local best, bestDepth = nil, math.huge
 
-    local ray = Mouse.UnitRay
-    if not ray then return nil end
+    -- (2) screen-space silhouette test
+    for _, part in ipairs(candidates) do
+        local hull = projectHull(part, cam)
+        if hull and pointInHull(mouseVP, hull) then
+            local depth = (part.Position - camPos).Magnitude
+            if depth < bestDepth then
+                best, bestDepth = part, depth
+            end
+        end
+    end
 
-    includeParams.FilterDescendantsInstances = parts
+    -- (1) exact 3D crosshair ray (union with the above)
+    local ray = cam:ViewportPointToRay(mouseVP.X, mouseVP.Y)
+    includeParams.FilterDescendantsInstances = candidates
     local result = Workspace:Raycast(ray.Origin, ray.Direction * 1000, includeParams)
-    if result then
-        return result.Instance, partToChar[result.Instance]
+    if result and partToChar[result.Instance] then
+        local depth = (result.Instance.Position - camPos).Magnitude
+        if depth < bestDepth then
+            best, bestDepth = result.Instance, depth
+        end
     end
-    return nil
-end
 
-local function isVisible(part, char)
-    local ray = Mouse.UnitRay
-    if not ray then return false end
-    wallParams.FilterDescendantsInstances = { LocalPlayer.Character }
-    local result = Workspace:Raycast(ray.Origin, ray.Direction * 1000, wallParams)
-    if result then
-        return result.Instance == part or result.Instance:IsDescendantOf(char)
-    end
-    return false
+    if best then return best, partToChar[best] end
+    return nil
 end
 
 --=============================================================
@@ -215,11 +272,7 @@ end
 --=============================================================
 --  MAIN LOOP
 --=============================================================
-local currentTarget = nil
-local confirmTime   = 0
-local firedForTarget = false
-local holding       = false
-local lastFire      = 0
+local currentTarget, confirmTime, firedForTarget, holding, lastFire = nil, 0, false, false, 0
 
 RunService.RenderStepped:Connect(function()
     if not Config.Enabled then
@@ -230,16 +283,11 @@ RunService.RenderStepped:Connect(function()
 
     local part, char = getTarget()
 
-    if part and Config.WallCheck and not isVisible(part, char) then
-        part, char = nil, nil
-    end
-
     if part and char then
-        -- new target -> reset confirmation timer
         if currentTarget ~= char then
-            currentTarget   = char
-            confirmTime     = tick()
-            firedForTarget  = false
+            currentTarget  = char
+            confirmTime    = tick()
+            firedForTarget = false
             if holding then release(); holding = false end
         end
 
@@ -247,25 +295,19 @@ RunService.RenderStepped:Connect(function()
         if elapsedMs >= Config.Delay then
             if Config.Mode == "Default" then
                 if not firedForTarget then
-                    click()
-                    firedForTarget = true
+                    click(); firedForTarget = true
                 end
             elseif Config.Mode == "Rapid" then
                 local interval = math.max(Config.Delay, 5) / 1000
                 if (tick() - lastFire) >= interval then
-                    click()
-                    lastFire = tick()
+                    click(); lastFire = tick()
                 end
             elseif Config.Mode == "Hold" then
-                if not holding then
-                    press()
-                    holding = true
-                end
+                if not holding then press(); holding = true end
             end
         end
     else
-        currentTarget  = nil
-        firedForTarget = false
+        currentTarget, firedForTarget = nil, false
         if holding then release(); holding = false end
     end
 end)
@@ -277,23 +319,3 @@ TriggerbotToggle:OnChanged(function(v) Config.Enabled = v end)
 TriggerBotDelay:OnChanged(function(v) Config.Delay = v end)
 ModeSelection:OnChanged(function(v) Config.Mode = firstOf(v) or "Default" end)
 BodyPartSelection:OnChanged(function(v) Config.BodyParts = toSet(v) end)
-TeamCheck:OnChanged(function(v) Config.TeamCheck = v end)
-WallCheck:OnChanged(function(v) Config.WallCheck = v end)
-
---=============================================================
---  ADDONS
---=============================================================
-ThemeManager:SetLibrary(Library)
-SaveManager:SetLibrary(Library)
-SaveManager:IgnoreThemeSettings()
-SaveManager:SetIgnoreIndexes({})
-ThemeManager:SetFolder("Venice")
-SaveManager:SetFolder("Venice/UniversalTriggerbot")
-SaveManager:BuildConfigSection(Tabs.Settings)
-ThemeManager:ApplyToTab(Tabs.Settings)
-
-Library:OnUnload(function()
-    if holding then release() end
-end)
-
-Library:Notify({ Title = "Venice", Description = "Universal Triggerbot loaded", Time = 4 })
