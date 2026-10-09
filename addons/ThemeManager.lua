@@ -72,7 +72,63 @@ local ThemeManager = {
         ["Monochrome"] = {
             4,
             { FontColor = "c7c7c7", MainColor = "161616", AccentColor = "8a8a8a", BackgroundColor = "161616", OutlineColor = "1b1b1b", BackgroundImage = "" },
-        }
+        },
+                ["Midnight Ocean"] = {
+            5,
+            { FontColor = "e6f1f7", MainColor = "0a1118", AccentColor = "4cc9f0", BackgroundColor = "080e14", OutlineColor = "111c26", BackgroundImage = "" },
+        },
+        ["Forest Mist"] = {
+            6,
+            { FontColor = "e8f3ec", MainColor = "0f1a15", AccentColor = "7ddba3", BackgroundColor = "0c1511", OutlineColor = "17271f", BackgroundImage = "" },
+        },
+        ["Ember"] = {
+            7,
+            { FontColor = "f7ebe4", MainColor = "1a100d", AccentColor = "ff7a45", BackgroundColor = "150c0a", OutlineColor = "2a1a15", BackgroundImage = "" },
+        },
+        ["Violet Noir"] = {
+            8,
+            { FontColor = "ece6f7", MainColor = "0d0a14", AccentColor = "8b5cf6", BackgroundColor = "0a0710", OutlineColor = "191325", BackgroundImage = "" },
+        },
+        ["Crimson Night"] = {
+            9,
+            { FontColor = "f6e9ec", MainColor = "140a0d", AccentColor = "e11d48", BackgroundColor = "100608", OutlineColor = "22121a", BackgroundImage = "" },
+        },
+        ["Teal Void"] = {
+            10,
+            { FontColor = "e3f4f3", MainColor = "081415", AccentColor = "2dd4bf", BackgroundColor = "060f10", OutlineColor = "0f2224", BackgroundImage = "" },
+        },
+        ["Slate Gold"] = {
+            11,
+            { FontColor = "ecebe6", MainColor = "16181d", AccentColor = "e0b84c", BackgroundColor = "12141a", OutlineColor = "22252c", BackgroundImage = "" },
+        },
+        ["Mocha"] = {
+            12,
+            { FontColor = "f1e6dc", MainColor = "1e1714", AccentColor = "d4a373", BackgroundColor = "19130f", OutlineColor = "2b211c", BackgroundImage = "" },
+        },
+        ["Sunset Dusk"] = {
+            13,
+            { FontColor = "fbeaf0", MainColor = "1f1424", AccentColor = "ff9e7a", BackgroundColor = "1a101e", OutlineColor = "2d1b33", BackgroundImage = "" },
+        },
+        ["Lavender Haze"] = {
+            14,
+            { FontColor = "f1ecfb", MainColor = "252033", AccentColor = "b9a2ff", BackgroundColor = "211c2e", OutlineColor = "322b45", BackgroundImage = "" },
+        },
+        ["Nord Frost"] = {
+            15,
+            { FontColor = "eceff4", MainColor = "2e3440", AccentColor = "88c0d0", BackgroundColor = "2b303b", OutlineColor = "3b4252", BackgroundImage = "" },
+        },
+        ["Rose Quartz"] = {
+            16,
+            { FontColor = "3a2a2f", MainColor = "f7eef0", AccentColor = "d45d79", BackgroundColor = "fbf5f6", OutlineColor = "ecdde1", BackgroundImage = "" },
+        },
+        ["Mint Light"] = {
+            17,
+            { FontColor = "1f3a2e", MainColor = "eef7f3", AccentColor = "2fa57a", BackgroundColor = "f6fbf8", OutlineColor = "dcece4", BackgroundImage = "" },
+        },
+        ["Arctic Light"] = {
+            18,
+            { FontColor = "1c2733", MainColor = "f4f7fa", AccentColor = "3b82f6", BackgroundColor = "ffffff", OutlineColor = "e3e9ef", BackgroundImage = "" },
+        },
     }
 }
 
