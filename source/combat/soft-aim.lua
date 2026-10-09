@@ -1,3 +1,6 @@
+CombatAB = CombatTab:AddLeftGroupbox("M A R D E N Soft-Aim")
+CombatABSettings = CombatTab:AddRightGroupbox("M A R D E N Soft-Aim Settings")
+
 local Svc = {
     Players = game:GetService("Players"),
     Input = game:GetService("UserInputService"),
