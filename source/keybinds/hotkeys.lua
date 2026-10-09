@@ -1,74 +1,71 @@
-local function FlipToggle(toggleName, label)
-    local toggle = Toggles[toggleName]
-    if not toggle then return end
-
-    local newState = not toggle.Value
-    toggle:SetValue(newState)
-
-    Library:Notify({
-        Title = "Marden Interface Notification",
-        Description = label .. (newState and " enabled" or " disabled"),
-        SoundId = SelectedNotificationSound,
-        Time = 8
-    })
-end
-
--- Hotkey 1: Outline Boxes (GlobalBoxVisuals)
+-- Hotkey 1: Outline Boxes
 KeybindsTab:AddLeftGroupbox("Visualize Outline Boxes")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("OutlineBoxesKeybind", {
         Default = nil,
         Text = "Hotkey",
-        Mode = "Toggle",
     })
-
 task.defer(function()
     Options.OutlineBoxesKeybind:OnClick(function()
-        FlipToggle("GlobalBoxVisuals", "Outline Boxes")
+        Library:Notify({
+            Title = "Marden Interface Notification",
+            Description = "Toggled / Enabled Outline Box Visualization",
+            SoundId = SelectedNotificationSound,
+            Time = 8
+        })
     end)
 end)
 
--- Hotkey 2: Fill Boxes (VisualizeFillBoxes)
+-- Hotkey 2: Fill Boxes
 KeybindsTab:AddRightGroupbox("Visualize Fill Boxes")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("FillBoxesKeybind", {
         Default = nil,
         Text = "Hotkey",
-        Mode = "Toggle",
     })
-
 task.defer(function()
     Options.FillBoxesKeybind:OnClick(function()
-        FlipToggle("VisualizeFillBoxes", "Fill Boxes")
+        Library:Notify({
+            Title = "Marden Interface Notification",
+            Description = "Toggled / Enabled Fill Box Visualization",
+            SoundId = SelectedNotificationSound,
+            Time = 8
+        })
     end)
 end)
 
--- Hotkey 3: Teammates (VisualizeTeammates)
+-- Hotkey 3: Teammates
 KeybindsTab:AddLeftGroupbox("Visualize Teammates")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("TeammatesBoxesKeybind", {
         Default = nil,
         Text = "Hotkey",
-        Mode = "Toggle",
     })
-
 task.defer(function()
     Options.TeammatesBoxesKeybind:OnClick(function()
-        FlipToggle("VisualizeTeammates", "Teammates")
+        Library:Notify({
+            Title = "Marden Interface Notification",
+            Description = "Toggled / Enabled Teammate Box Visualization",
+            SoundId = SelectedNotificationSound,
+            Time = 8
+        })
     end)
 end)
 
--- Hotkey 4: Box Visibility (DetectBoxVisibility)
+-- Hotkey 4: Box Visibility
 KeybindsTab:AddRightGroupbox("Visualize Box Visibility")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("VisibilityBoxesKeybind", {
         Default = nil,
         Text = "Hotkey",
-        Mode = "Toggle",
     })
-
 task.defer(function()
     Options.VisibilityBoxesKeybind:OnClick(function()
-        FlipToggle("DetectBoxVisibility", "Box Visibility")
+        Library:Notify({
+            Title = "Marden Interface Notification",
+            Description = "Toggled / Enabled Box Visibility",
+            SoundId = SelectedNotificationSound,
+            Time = 8
+        })
     end)
 end)
