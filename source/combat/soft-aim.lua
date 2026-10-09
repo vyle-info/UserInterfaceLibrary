@@ -1,7 +1,3 @@
-
-CombatAB = CombatTab:AddLeftGroupbox("VultureStack Soft-Aim")
-CombatABSettings = CombatTab:AddRightGroupbox("VultureStack Soft-Aim Settings")
-
 local Svc = {
     Players = game:GetService("Players"),
     Input = game:GetService("UserInputService"),
