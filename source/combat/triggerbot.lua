@@ -19,7 +19,7 @@ TriggerbotGroupBox:AddSlider("TriggerBotDelay", {
 
 TriggerbotGroupBox:AddDropdown("ModeSelection", {
     Text = "Triggerbot Mode",
-    Values = { "Default", "Hold", "Rapid" },
+    Values = { "Default", "Rapid", "Hold" },
     Multi = false,
     Searchable = true,
     Default = { "Default" },
