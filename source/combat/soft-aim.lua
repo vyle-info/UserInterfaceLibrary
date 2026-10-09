@@ -111,8 +111,6 @@ CombatABSettings:AddDropdown("FOVShape", {
     Default = 1,
 })
 
-Options.FOVShape:OnChanged(function() end)
-
 Toggles.LockOnToggle:OnChanged(function(state)
     if not state then
         S.Locked = false
