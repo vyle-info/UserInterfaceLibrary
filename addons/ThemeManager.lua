@@ -568,6 +568,19 @@ local ThemeManager = {
         ["Gunmetal"] = {
             128,
             { FontColor = "e6e9ec", MainColor = "1b1f23", AccentColor = "f2a65a", BackgroundColor = "15181c", OutlineColor = "2c3238", BackgroundImage = "" },
+			local RunService = game:GetService("RunService")
+
+        local pride = {
+          129,
+    { FontColor = "f5f5f5", MainColor = "050505", AccentColor = "ffffff", BackgroundColor = "000000", OutlineColor = "111111", BackgroundImage = "" },
+}
+
+local SPEED = 0.2 -- full rainbow cycles per second
+
+RunService.Heartbeat:Connect(function()
+    local hue = (os.clock() * SPEED) % 1
+    pride[2].AccentColor = Color3.fromHSV(hue, 1, 1):ToHex()
+end)
         },
     }
 }
