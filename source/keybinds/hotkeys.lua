@@ -2,14 +2,16 @@
 KeybindsTab:AddLeftGroupbox("Visualize Outline Boxes")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("OutlineBoxesKeybind", {
-        Default = "none",
+         Default = "None",
+        Mode = "Toggle",
         Text = "Hotkey",
     })
 task.defer(function()
     Options.OutlineBoxesKeybind:OnClick(function()
+    Toggles.GlobalBoxVisuals:SetValue(not Toggles.GlobalBoxVisuals.Value)
         Library:Notify({
             Title = "Marden Interface Notification",
-            Description = "Toggled / Enabled Outline Box Visualization",
+            Description = (Toggles.GlobalBoxVisuals.Value and "Enabled" or "Disabled") .. " Outline Box Visualization",
             SoundId = SelectedNotificationSound,
             Time = 8
         })
@@ -20,14 +22,16 @@ end)
 KeybindsTab:AddRightGroupbox("Visualize Fill Boxes")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("FillBoxesKeybind", {
-        Default = "none",
+        Default = "None",
+        Mode = "Toggle",
         Text = "Hotkey",
     })
 task.defer(function()
     Options.FillBoxesKeybind:OnClick(function()
+    Toggles.VisualizeFillBoxes:SetValue(not Toggles.VisualizeFillBoxes.Value)
         Library:Notify({
             Title = "Marden Interface Notification",
-            Description = "Toggled / Enabled Fill Box Visualization",
+            Description = (Toggles.VisualizeFillBoxes.Value and "Enabled" or "Disabled") .. " Fill Box Visualization",
             SoundId = SelectedNotificationSound,
             Time = 8
         })
@@ -38,14 +42,16 @@ end)
 KeybindsTab:AddLeftGroupbox("Visualize Teammates")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("TeammatesBoxesKeybind", {
-        Default = "none",
+        Default = "None",
+        Mode = "Toggle",
         Text = "Hotkey",
     })
 task.defer(function()
     Options.TeammatesBoxesKeybind:OnClick(function()
+    Toggles.VisualizeTeammates:SetValue(not Toggles.VisualizeTeammates.Value)
         Library:Notify({
             Title = "Marden Interface Notification",
-            Description = "Toggled / Enabled Teammate Box Visualization",
+            Description = (Toggles.VisualizeTeammates.Value and "Enabled" or "Disabled") .. " Teammate Box Visualization",
             SoundId = SelectedNotificationSound,
             Time = 8
         })
@@ -56,14 +62,16 @@ end)
 KeybindsTab:AddRightGroupbox("Visualize Box Visibility")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("VisibilityBoxesKeybind", {
-        Default = "none",
+        Default = "None",
+        Mode = "Toggle",
         Text = "Hotkey",
     })
 task.defer(function()
     Options.VisibilityBoxesKeybind:OnClick(function()
+    Toggles.DetectBoxVisibility:SetValue(not Toggles.DetectBoxVisibility.Value)
         Library:Notify({
             Title = "Marden Interface Notification",
-            Description = "Toggled / Enabled Box Visibility",
+            Description = (Toggles.DetectBoxVisibility.Value and "Enabled" or "Disabled") .. " Box Visibility",
             SoundId = SelectedNotificationSound,
             Time = 8
         })
@@ -76,7 +84,8 @@ end)
 KeybindsTab:AddLeftGroupbox("Visualize Outline Highlights")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("OutlineHighlightsKeybind", {
-        Default = "none",
+        Default = "None",
+        Mode = "Toggle",
         Text = "Hotkey",
     })
 task.defer(function()
@@ -94,7 +103,8 @@ end)
 KeybindsTab:AddRightGroupbox("Visualize Fill Highlights")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("FillHighlightsKeybind", {
-        Default = "none",
+        Default = "None",
+        Mode = "Toggle",
         Text = "Hotkey",
     })
 task.defer(function()
@@ -112,7 +122,8 @@ end)
 KeybindsTab:AddLeftGroupbox("Visualize Highlight Teammates")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("TeammatesHighlightsKeybind", {
-        Default = "none",
+        Default = "None",
+        Mode = "Toggle",
         Text = "Hotkey",
     })
 task.defer(function()
@@ -130,7 +141,8 @@ end)
 KeybindsTab:AddRightGroupbox("Visualize Highlight Visibility")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("VisibilityHighlightsKeybind", {
-        Default = "none",
+        Default = "None",
+        Mode = "Toggle",
         Text = "Hotkey",
     })
 task.defer(function()
