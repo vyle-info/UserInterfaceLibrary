@@ -69,3 +69,77 @@ task.defer(function()
         })
     end)
 end)
+
+
+
+-- Hotkey 5: Outline Highlights
+KeybindsTab:AddLeftGroupbox("Visualize Outline Highlights")
+    :AddLabel("Selected Hotkey:")
+    :AddKeyPicker("OutlineHighlightsKeybind", {
+        Default = nil,
+        Text = "Hotkey",
+    })
+task.defer(function()
+    Options.OutlineHighlightsKeybind:OnClick(function()
+        Library:Notify({
+            Title = "Marden Interface Notification",
+            Description = "Toggled / Enabled Outline Highlight Visualization",
+            SoundId = SelectedNotificationSound,
+            Time = 8
+        })
+    end)
+end)
+
+-- Hotkey 6: Fill Highlights
+KeybindsTab:AddRightGroupbox("Visualize Fill Highlights")
+    :AddLabel("Selected Hotkey:")
+    :AddKeyPicker("FillHighlightsKeybind", {
+        Default = nil,
+        Text = "Hotkey",
+    })
+task.defer(function()
+    Options.FillHighlightsKeybind:OnClick(function()
+        Library:Notify({
+            Title = "Marden Interface Notification",
+            Description = "Toggled / Enabled Fill Highlight Visualization",
+            SoundId = SelectedNotificationSound,
+            Time = 8
+        })
+    end)
+end)
+
+-- Hotkey 7: Highlight Teammates
+KeybindsTab:AddLeftGroupbox("Visualize Highlight Teammates")
+    :AddLabel("Selected Hotkey:")
+    :AddKeyPicker("TeammatesHighlightsKeybind", {
+        Default = nil,
+        Text = "Hotkey",
+    })
+task.defer(function()
+    Options.TeammatesHighlightsKeybind:OnClick(function()
+        Library:Notify({
+            Title = "Marden Interface Notification",
+            Description = "Toggled / Enabled Teammate Highlight Visualization",
+            SoundId = SelectedNotificationSound,
+            Time = 8
+        })
+    end)
+end)
+
+-- Hotkey 8: Highlight Visibility
+KeybindsTab:AddRightGroupbox("Visualize Highlight Visibility")
+    :AddLabel("Selected Hotkey:")
+    :AddKeyPicker("VisibilityHighlightsKeybind", {
+        Default = nil,
+        Text = "Hotkey",
+    })
+task.defer(function()
+    Options.VisibilityHighlightsKeybind:OnClick(function()
+        Library:Notify({
+            Title = "Marden Interface Notification",
+            Description = "Toggled / Enabled Highlight Visibility",
+            SoundId = SelectedNotificationSound,
+            Time = 8
+        })
+    end)
+end)
