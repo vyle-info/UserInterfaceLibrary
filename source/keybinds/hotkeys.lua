@@ -2,7 +2,7 @@
 KeybindsTab:AddLeftGroupbox("Visualize Outline Boxes")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("OutlineBoxesKeybind", {
-        Default = nil,
+        Default = "none",
         Text = "Hotkey",
     })
 task.defer(function()
@@ -20,7 +20,7 @@ end)
 KeybindsTab:AddRightGroupbox("Visualize Fill Boxes")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("FillBoxesKeybind", {
-        Default = nil,
+        Default = "none",
         Text = "Hotkey",
     })
 task.defer(function()
@@ -38,7 +38,7 @@ end)
 KeybindsTab:AddLeftGroupbox("Visualize Teammates")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("TeammatesBoxesKeybind", {
-        Default = nil,
+        Default = "none",
         Text = "Hotkey",
     })
 task.defer(function()
@@ -56,7 +56,7 @@ end)
 KeybindsTab:AddRightGroupbox("Visualize Box Visibility")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("VisibilityBoxesKeybind", {
-        Default = nil,
+        Default = "none",
         Text = "Hotkey",
     })
 task.defer(function()
@@ -76,7 +76,7 @@ end)
 KeybindsTab:AddLeftGroupbox("Visualize Outline Highlights")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("OutlineHighlightsKeybind", {
-        Default = nil,
+        Default = "none",
         Text = "Hotkey",
     })
 task.defer(function()
@@ -94,7 +94,7 @@ end)
 KeybindsTab:AddRightGroupbox("Visualize Fill Highlights")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("FillHighlightsKeybind", {
-        Default = nil,
+        Default = "none",
         Text = "Hotkey",
     })
 task.defer(function()
@@ -112,7 +112,7 @@ end)
 KeybindsTab:AddLeftGroupbox("Visualize Highlight Teammates")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("TeammatesHighlightsKeybind", {
-        Default = nil,
+        Default = "none",
         Text = "Hotkey",
     })
 task.defer(function()
@@ -130,7 +130,7 @@ end)
 KeybindsTab:AddRightGroupbox("Visualize Highlight Visibility")
     :AddLabel("Selected Hotkey:")
     :AddKeyPicker("VisibilityHighlightsKeybind", {
-        Default = nil,
+        Default = "none",
         Text = "Hotkey",
     })
 task.defer(function()
