@@ -1,4 +1,3 @@
-
 CombatAB = CombatTab:AddLeftGroupbox("M A R D E N Soft-Aim")
 CombatABSettings = CombatTab:AddRightGroupbox("M A R D E N Soft-Aim Settings")
 
