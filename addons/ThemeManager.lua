@@ -78,8 +78,8 @@ local ThemeManager = {
             { FontColor = "e6f1f7", MainColor = "0d151c", AccentColor = "4e899c", BackgroundColor = "0c131a", OutlineColor = "131c24", BackgroundImage = "" },
         },
         ["Everforest"] = {
-            6,
-            { FontColor = "e8f3ec", MainColor = "0f1a15", AccentColor = "7ddba3", BackgroundColor = "0c1511", OutlineColor = "17271f", BackgroundImage = "" },
+            20,
+            { FontColor = "e8f3ec", MainColor = "0e1a14", AccentColor = "456953", BackgroundColor = "0e1713", OutlineColor = "111f18", BackgroundImage = "" },
         },
         ["Ember"] = {
             7,
