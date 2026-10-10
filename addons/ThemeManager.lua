@@ -78,15 +78,15 @@ local ThemeManager = {
             { FontColor = "e6f1f7", MainColor = "0d151c", AccentColor = "4e899c", BackgroundColor = "0c131a", OutlineColor = "131c24", BackgroundImage = "" },
         },
         ["Everforest"] = {
-            20,
+            6,
             { FontColor = "e8f3ec", MainColor = "0e1a14", AccentColor = "456953", BackgroundColor = "0e1713", OutlineColor = "111f18", BackgroundImage = "" },
         },
         ["Ember"] = {
             7,
-            { FontColor = "f7ebe4", MainColor = "1a100d", AccentColor = "ff7a45", BackgroundColor = "150c0a", OutlineColor = "2a1a15", BackgroundImage = "" },
+            { FontColor = "f7ebe4", MainColor = "1a100d", AccentColor = "8c4a30", BackgroundColor = "170e0c", OutlineColor = "211511", BackgroundImage = "" },
         },
         ["Vesqer"] = {
-            18,
+            8,
             { FontColor = "e8e8e8", MainColor = "161616", AccentColor = "a68265", BackgroundColor = "131313", OutlineColor = "1b1b1b", BackgroundImage = "" },
         },
         ["Olive"] = {
