@@ -77,7 +77,7 @@ local ThemeManager = {
             5,
             { FontColor = "e8e8e8", MainColor = "161616", AccentColor = "a68265", BackgroundColor = "131313", OutlineColor = "1b1b1b", BackgroundImage = "" },
         },
-		["Everforest"] = {
+		["Forest"] = {
             6,
             { FontColor = "e8f3ec", MainColor = "101a15", AccentColor = "456953", BackgroundColor = "0e1713", OutlineColor = "15211b", BackgroundImage = "" },
         },
