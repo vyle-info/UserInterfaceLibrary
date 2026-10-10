@@ -1,5 +1,3 @@
-# UserInterfaceLibrary
-
 ![preview](assets/preview.jpg)
 
 ## General Information:
