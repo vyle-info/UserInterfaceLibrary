@@ -7,7 +7,6 @@ end)
 
 local HttpService: HttpService = cloneref(game:GetService("HttpService"))
 
---// Fix is_____ functions for shitsploits, those functions should never error, only return a boolean. (why is this still a problem in the big 2026)
 local isfolder, isfile, listfiles = isfolder, isfile, listfiles
 local isfolder_copy, isfile_copy, listfiles_copy = clonefunction(isfolder), clonefunction(isfile), clonefunction(listfiles)
 local isfolder_success, isfolder_error = pcall(function() return isfolder_copy("test" .. tostring(math.random(1000000, 9999999))) end)
