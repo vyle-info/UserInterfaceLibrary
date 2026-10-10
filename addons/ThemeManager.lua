@@ -69,25 +69,25 @@ local ThemeManager = {
             3,
             { FontColor = "f8eefb", MainColor = "211a28", AccentColor = "ee9bd8", BackgroundColor = "1f1926", OutlineColor = "2d2238", BackgroundImage = "" },
         },
-        ["Monochrome"] = {
+		["Everforest"] = {
             4,
-            { FontColor = "c7c7c7", MainColor = "161616", AccentColor = "8a8a8a", BackgroundColor = "161616", OutlineColor = "1b1b1b", BackgroundImage = "" },
-        },
-        ["Midnight Ocean"] = {
-            5,
-            { FontColor = "e6f1f7", MainColor = "0d151c", AccentColor = "4e899c", BackgroundColor = "0c131a", OutlineColor = "131c24", BackgroundImage = "" },
-        },
-        ["Everforest"] = {
-            6,
-            { FontColor = "e8f3ec", MainColor = "0e1a14", AccentColor = "456953", BackgroundColor = "0e1713", OutlineColor = "111f18", BackgroundImage = "" },
+            { FontColor = "e8f3ec", MainColor = "101a15", AccentColor = "456953", BackgroundColor = "0e1713", OutlineColor = "15211b", BackgroundImage = "" },
         },
         ["Ember"] = {
-            7,
+            5,
             { FontColor = "f7ebe4", MainColor = "1a100d", AccentColor = "8c4a30", BackgroundColor = "170e0c", OutlineColor = "211511", BackgroundImage = "" },
         },
         ["Vesqer"] = {
-            8,
+            6,
             { FontColor = "e8e8e8", MainColor = "161616", AccentColor = "a68265", BackgroundColor = "131313", OutlineColor = "1b1b1b", BackgroundImage = "" },
+        },
+        ["Monochrome"] = {
+            7,
+            { FontColor = "c7c7c7", MainColor = "161616", AccentColor = "8a8a8a", BackgroundColor = "161616", OutlineColor = "1b1b1b", BackgroundImage = "" },
+        },
+        ["Midnight Ocean"] = {
+            8,
+            { FontColor = "e6f1f7", MainColor = "0d151c", AccentColor = "4e899c", BackgroundColor = "0c131a", OutlineColor = "131c24", BackgroundImage = "" },
         },
     }
 }
