@@ -1,3 +1,27 @@
+# UserInterfaceLibrary
+
+![preview](assets/preview.png)
+
+## General Information:
+
+This repository is a fork of [Obsidian](https://github.com/deividcomsono/Obsidian)
+& maintained primarily for personal usage and modifications specified to other projects.
+
+It is not maintained as a public facing library nor a stable third-party dependency / distribution.
+
+## General Usage Disclaimer:
+
+- Development is focused on the main team's personal projects and usage.
+- Elements, components, implementations, and behavior may change or break without notice.
+- No general user support, documentations, or compatibility notices are provided.
+- This library may contain experimental & incomplete implementations which may break or cause issues.
+
+## General Usage Credits:
+
+This repository is a fork. Credit and applicable license notices for the original project and its contributors must be preserved in accordance with the original license (MIT)
+
+---
+
 # 2026-10-07
 
 **Added Features:**
