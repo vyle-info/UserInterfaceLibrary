@@ -81,11 +81,11 @@ local ThemeManager = {
             6,
             { FontColor = "e8f3ec", MainColor = "101a15", AccentColor = "456953", BackgroundColor = "0e1713", OutlineColor = "15211b", BackgroundImage = "" },
         },
-        ["Monochrome"] = {
+        ["Chrome"] = {
             7,
             { FontColor = "c7c7c7", MainColor = "161616", AccentColor = "8a8a8a", BackgroundColor = "161616", OutlineColor = "1b1b1b", BackgroundImage = "" },
         },
-        ["Midnight Ocean"] = {
+        ["Ocean"] = {
             8,
             { FontColor = "e6f1f7", MainColor = "0d151c", AccentColor = "4e899c", BackgroundColor = "0c131a", OutlineColor = "131c24", BackgroundImage = "" },
         },
