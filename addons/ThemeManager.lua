@@ -77,7 +77,7 @@ local ThemeManager = {
             5,
             { FontColor = "e8e8e8", MainColor = "161616", AccentColor = "a68265", BackgroundColor = "131313", OutlineColor = "1b1b1b", BackgroundImage = "" },
         },
-		["Forest"] = {
+        ["Forest"] = {
             6,
             { FontColor = "e8f3ec", MainColor = "101a15", AccentColor = "456953", BackgroundColor = "0e1713", OutlineColor = "15211b", BackgroundImage = "" },
         },
@@ -157,15 +157,15 @@ end
 
 --// Folder helper \\--
 local function SplitPath(Path: string): {string}
-	local Result = {}
-	local Current = ""
+    local Result = {}
+    local Current = ""
 
-	for Part in string.gmatch(Path, "[^/]+") do
-		Current = if Current == "" then Part else (Current .. "/" .. Part)
-		table.insert(Result, Current)
-	end
+    for Part in string.gmatch(Path, "[^/]+") do
+        Current = if Current == "" then Part else (Current .. "/" .. Part)
+        table.insert(Result, Current)
+    end
 
-	return Result
+    return Result
 end
 
 local function GetFolderPath(): false | string
@@ -298,6 +298,9 @@ local function BuildCurrentThemeData(): {[string]: any}
     for _, SchemeIndex in SchemeIndexes do
         ThemeData[SchemeIndex] = Library.Options[SchemeIndex].Value:ToHex()
     end
+
+    --// Window transparency comes from the Background color picker's alpha slider
+    ThemeData.BackgroundTransparency = Library.Options.BackgroundColor.Transparency
 
     return ThemeData
 end
@@ -586,6 +589,36 @@ function ThemeManager:UpdateContrastWarning()
 end
 
 --// Apply Theme \\--
+
+--// Applies the Background color picker's alpha slider to the window and everything that uses the BackgroundColor scheme color
+local function ApplyTransparency()
+    local Library = ThemeManager.Library
+    local BackgroundOption = Library.Options.BackgroundColor
+    if not BackgroundOption then
+        return
+    end
+
+    local Alpha = BackgroundOption.Transparency
+    if typeof(Alpha) ~= "number" then
+        return
+    end
+
+    --// Main window and content area use function colors in Library.lua, so they are set explicitly
+    if Library.Window and Library.Window.MainFrame then
+        Library.Window.MainFrame.BackgroundTransparency = Alpha
+    end
+    if Library.WindowContainer then
+        Library.WindowContainer.BackgroundTransparency = Alpha
+    end
+
+    --// Everything else registered against the BackgroundColor scheme color (groupboxes, sidebar, menus, etc.)
+    for Instance, Props in Library.Registry do
+        if typeof(Props) == "table" and Props.BackgroundColor3 == "BackgroundColor" and Instance.Parent then
+            Instance.BackgroundTransparency = Alpha
+        end
+    end
+end
+
 function ThemeManager:ThemeUpdate()
     local Library = ThemeManager.Library
 
@@ -597,6 +630,7 @@ function ThemeManager:ThemeUpdate()
     end
 
     Library:UpdateColorsUsingRegistry()
+    ApplyTransparency()
     ThemeManager:UpdateContrastWarning()
 end
 
@@ -608,6 +642,9 @@ function ThemeManager:ApplyThemeData(ThemeData: any): (boolean, string?)
     end
 
     local Library = ThemeManager.Library
+
+    --// Read before the loop; applied after it so setting BackgroundColor doesn't reset the alpha
+    local SavedTransparency = ThemeData.BackgroundTransparency
 
     for Index, Value in ThemeData do
         if Index == "VideoLink" then
@@ -639,6 +676,15 @@ function ThemeManager:ApplyThemeData(ThemeData: any): (boolean, string?)
         if Element then
             Element:SetValue(FinalValue)
         end
+    end
+
+    --// Restore (or reset) the window transparency
+    local BackgroundOption = Library.Options.BackgroundColor
+    if BackgroundOption then
+        BackgroundOption:SetValueRGB(
+            BackgroundOption.Value,
+            if typeof(SavedTransparency) == "number" then SavedTransparency else 0
+        )
     end
 
     ThemeManager:ThemeUpdate()
@@ -756,16 +802,16 @@ function ThemeManager:CreateThemeManager(Themesbox: any)
         return ThemeManager.BuiltInThemes[IndexA][1] < ThemeManager.BuiltInThemes[IndexB][1]
     end)
 
-    local function CreateColorOption(Text, SchemeIndex)
+    local function CreateColorOption(Text, SchemeIndex, WithTransparency)
         Themesbox:AddLabel(Text):AddColorPicker(SchemeIndex, {
             Default = ThemeManager.Library.Scheme[SchemeIndex],
-			Transparency = 0,
+            Transparency = if WithTransparency then 0 else nil,
         })
 
         return ThemeManager.Library.Options[SchemeIndex]
     end
 
-    local BackgroundColor = CreateColorOption("Background color", "BackgroundColor")
+    local BackgroundColor = CreateColorOption("Background color", "BackgroundColor", true)
     local MainColor = CreateColorOption("Main color", "MainColor")
     local AccentColor = CreateColorOption("Accent color", "AccentColor")
     local OutlineColor = CreateColorOption("Outline color", "OutlineColor")
