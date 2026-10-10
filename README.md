@@ -388,8 +388,6 @@
 
 ---
 
-## 2025
-
 # 2025-12-30
 
 **Breaking changes**
@@ -575,8 +573,6 @@
 - `AddDependencyBox` and `AddDependencyGroupBox` methods on the `Groupbox` class
 
 ---
-
-## 2024
 
 # 2024-01-18
 
