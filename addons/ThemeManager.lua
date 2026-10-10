@@ -758,7 +758,8 @@ function ThemeManager:CreateThemeManager(Themesbox: any)
 
     local function CreateColorOption(Text, SchemeIndex)
         Themesbox:AddLabel(Text):AddColorPicker(SchemeIndex, {
-            Default = ThemeManager.Library.Scheme[SchemeIndex]
+            Default = ThemeManager.Library.Scheme[SchemeIndex],
+			Transparency = 0,
         })
 
         return ThemeManager.Library.Options[SchemeIndex]
