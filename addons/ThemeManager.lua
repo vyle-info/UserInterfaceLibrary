@@ -89,14 +89,6 @@ local ThemeManager = {
             8,
             { FontColor = "e8e8e8", MainColor = "161616", AccentColor = "a68265", BackgroundColor = "131313", OutlineColor = "1b1b1b", BackgroundImage = "" },
         },
-        ["Olive"] = {
-            9,
-            { FontColor = "ebebd6", MainColor = "15160a", AccentColor = "a3a847", BackgroundColor = "131409", OutlineColor = "1b1d08", BackgroundImage = "" },
-        },
-        ["Void"] = {
-            10,
-            { FontColor = "f5f5f5", MainColor = "050505", AccentColor = "ffffff", BackgroundColor = "000000", OutlineColor = "111111", BackgroundImage = "" },
-        },
     }
 }
 
