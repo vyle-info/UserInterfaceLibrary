@@ -1,22 +1,32 @@
-![preview](assets/preview.jpg)
+> [!IMPORTANT]
+> ## General Information:
+>
+> This repository is a fork of [Obsidian](https://github.com/deividcomsono/Obsidian)
+> & maintained mainly for personal usage and modifications specified to other projects.
+>
+> It is not maintained as a public facing library nor a stable third-party dependency / distribution.
+>
+> We do not encourage users to utilize this library for their own usage.
+>
+> Multiple things may change without prior or further notice & may impact / affect the users
 
-## General Information:
 
-This repository is a fork of [Obsidian](https://github.com/deividcomsono/Obsidian)
-& maintained mainly for personal usage and modifications specified to other projects.
+> [!WARNING]
+> ## General Usage Disclaimer:
+>
+> - Development is focused on the main team's personal projects and usage.
+> - Elements, components, implementations & behavior may change or break without notice.
+> - No general user support, documentations, or compatibility notices will be provided.
+> - This library may contain experimental implementations which may break or cause issues.
 
-It is not maintained as a public facing library nor a stable third-party dependency / distribution.
-
-## General Usage Disclaimer:
-
-- Development is focused on the main team's personal projects and usage.
-- Elements, components, implementations & behavior may change or break without notice.
-- No general user support, documentations, or compatibility notices will be provided.
-- This library may contain experimental implementations which may break or cause issues.
-
-## General Usage Credits:
-
-This repository is a fork. Credit and applicable license notices for the original project and its contributors must be preserved in accordance with the original license (MIT)
+> [!NOTE]
+> ## General Usage Credits:
+>
+> This repository is a fork. Credit and applicable license notices for the original project and its contributors must be preserved in accordance with the original license (MIT)
+>
+> This Fork is currently maintained by The Fifth Marden
+>
+> They reserve the right to discontinue, restrict, or disable access to this library at any time if required.
 
 ---
 
