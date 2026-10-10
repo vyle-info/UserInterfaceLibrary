@@ -3,7 +3,7 @@
 ## General Information:
 
 This repository is a fork of [Obsidian](https://github.com/deividcomsono/Obsidian)
-& maintained primarily for personal usage and modifications specified to other projects.
+& maintained mainly for personal usage and modifications specified to other projects.
 
 It is not maintained as a public facing library nor a stable third-party dependency / distribution.
 
