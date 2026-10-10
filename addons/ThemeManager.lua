@@ -75,7 +75,7 @@ local ThemeManager = {
         },
         ["Midnight Ocean"] = {
             5,
-            { FontColor = "e6f1f7", MainColor = "0a1118", AccentColor = "4cc9f0", BackgroundColor = "080e14", OutlineColor = "111c26", BackgroundImage = "" },
+            { FontColor = "e6f1f7", MainColor = "0d151c", AccentColor = "4e899c", BackgroundColor = "0c131a", OutlineColor = "131c24", BackgroundImage = "" },
         },
         ["Everforest"] = {
             6,
