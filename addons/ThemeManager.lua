@@ -69,17 +69,17 @@ local ThemeManager = {
             3,
             { FontColor = "f8eefb", MainColor = "211a28", AccentColor = "ee9bd8", BackgroundColor = "1f1926", OutlineColor = "2d2238", BackgroundImage = "" },
         },
-		["Everforest"] = {
-            4,
-            { FontColor = "e8f3ec", MainColor = "101a15", AccentColor = "456953", BackgroundColor = "0e1713", OutlineColor = "15211b", BackgroundImage = "" },
-        },
         ["Ember"] = {
-            5,
+            4,
             { FontColor = "f7ebe4", MainColor = "1a100d", AccentColor = "8c4a30", BackgroundColor = "170e0c", OutlineColor = "211511", BackgroundImage = "" },
         },
         ["Vesqer"] = {
-            6,
+            5,
             { FontColor = "e8e8e8", MainColor = "161616", AccentColor = "a68265", BackgroundColor = "131313", OutlineColor = "1b1b1b", BackgroundImage = "" },
+        },
+		["Everforest"] = {
+            6,
+            { FontColor = "e8f3ec", MainColor = "101a15", AccentColor = "456953", BackgroundColor = "0e1713", OutlineColor = "15211b", BackgroundImage = "" },
         },
         ["Monochrome"] = {
             7,
