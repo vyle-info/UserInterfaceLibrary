@@ -86,8 +86,8 @@ local ThemeManager = {
             { FontColor = "f7ebe4", MainColor = "1a100d", AccentColor = "ff7a45", BackgroundColor = "150c0a", OutlineColor = "2a1a15", BackgroundImage = "" },
         },
         ["Vesqer"] = {
-            8,
-            { FontColor = "e8e8e8", MainColor = "121212", AccentColor = "a68265", BackgroundColor = "0f0f0f", OutlineColor = "1a1a1a", BackgroundImage = "" },
+            17,
+            { FontColor = "e8e8e8", MainColor = "161616", AccentColor = "a68265", BackgroundColor = "131313", OutlineColor = "1a1a1a", BackgroundImage = "" },
         },
         ["Olive"] = {
             9,
