@@ -1,6 +1,6 @@
 # UserInterfaceLibrary
 
-![preview](assets/preview.png)
+![preview](assets/preview.jpg)
 
 ## General Information:
 
