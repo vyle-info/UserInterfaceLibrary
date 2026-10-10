@@ -28,7 +28,7 @@
 >
 > They reserve the right to discontinue, restrict, or disable access to this library at any time if required.
 
----
+![preview](assets/preview.jpg)
 
 ## Changelogs / Updates:
 
