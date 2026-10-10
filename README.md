@@ -30,7 +30,8 @@
 
 ![preview](assets/preview.jpg)
 
-## Changelogs / Updates:
+<details>
+<summary>Changelogs / Updates</summary>
 
 # 2026-10-07
 
@@ -592,3 +593,5 @@
 
 **Fixed Features:**
 - DPI scale issues (title wrapping, slider fill bar and dropdown menu size)
+
+</details>
