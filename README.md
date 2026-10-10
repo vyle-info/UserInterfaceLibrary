@@ -29,7 +29,7 @@
 
 ![preview](assets/preview.jpg)
 
-<details>
+<details open>
 <summary>View Changelogs / Updates</summary>
 
 # 2026-10-07
