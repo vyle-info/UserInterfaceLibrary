@@ -35,7 +35,7 @@ local CustomImageManagerAssets = {
     TransparencyTexture = {
         RobloxId = 139785960036434,
         Path = "Marden-assets/assets/images/TransparencyTexture.png",
-        URL = BaseURL .. "assets/TransparencyTexture.png",
+        URL = BaseURL .. "assets/images/TransparencyTexture.png",
 
         Id = nil,
     },
@@ -43,7 +43,7 @@ local CustomImageManagerAssets = {
     SaturationMap = {
         RobloxId = 4155801252,
         Path = "Marden-assets/assets/images/SaturationMap.png",
-        URL = BaseURL .. "assets/SaturationMap.png",
+        URL = BaseURL .. "assets/images/SaturationMap.png",
 
         Id = nil,
     },
@@ -51,7 +51,7 @@ local CustomImageManagerAssets = {
     LoadingIcon = {
         RobloxId = 97544096941083,
         Path = "Marden-assets/assets/images/LoadingIcon.png",
-        URL = BaseURL .. "assets/LoadingIcon.png",
+        URL = BaseURL .. "assets/images/LoadingIcon.png",
 
         Id = nil,
     },
@@ -59,7 +59,7 @@ local CustomImageManagerAssets = {
     CheckIcon = {
         RobloxId = 97682394690683,
         Path = "Marden-assets/assets/images/CheckIcon.png",
-        URL = BaseURL .. "assets/CheckIcon.png",
+        URL = BaseURL .. "assets/images/CheckIcon.png",
 
         Id = nil,
     },
