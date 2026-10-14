@@ -24,7 +24,7 @@ if string.find(executor, "Xeno") or string.find(executor, "Solara") then
 end
 
 local repo = "https://raw.githubusercontent.com/vyle-info/UserInterfaceLibrary/via/"
-local Library, ThemeManager, SaveManager = loadstring(game:HttpGet(repo .. "source/Library.lua"))(), loadstring(game:HttpGet(repo .. "addons/ThemeManager.lua"))(), loadstring(game:HttpGet(repo .. "addons/ConfigManager.lua"))()
+local Library, ThemeManager, SaveManager = loadstring(game:HttpGet(repo .. "source/library.lua"))(), loadstring(game:HttpGet(repo .. "addons/ThemeManager.lua"))(), loadstring(game:HttpGet(repo .. "addons/ConfigManager.lua"))()
 
 --[═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════]--
 
@@ -151,6 +151,8 @@ Library:SetFont(Enum.Font.Jura)
 
 Library:SetDPIScale(99)
 
+ThemeManager:SetFolder("Marden-Themes")
+
 SaveManager:SetFolder("Marden-Configs")
 
 SaveManager:SetIgnoreIndexes({ "MenuKeybind", "WatermarkToggleKeybind" })
@@ -158,10 +160,6 @@ SaveManager:SetIgnoreIndexes({ "MenuKeybind", "WatermarkToggleKeybind" })
 SaveManager:BuildConfigSection(Tabs["UI Management"])
 
 ThemeManager:ApplyToTab(Tabs["UI Management"])
-
-ThemeManager:SetFolder("Marden-Themes")
-
-SaveManager:LoadAutoloadConfig()
 
 -- Watermark & UserInterface Divison #2
 
@@ -323,7 +321,7 @@ UIManagementGroup:AddInput("DPIScale", {
 
 UIManagementGroup:AddSlider("BackgroundTransparency", {
     Text = "Background Interface Transparency",
-    Default = 0,
+    Default = tonumber(string.format("%.1f", Library.BackgroundTransparency * 100)),
     Min = 0,
     Max = 100,
     Rounding = 1,
@@ -335,7 +333,7 @@ UIManagementGroup:AddSlider("BackgroundTransparency", {
 
 UIManagementGroup:AddSlider("GroupboxTransparency", {
     Text = "Groupbox Interface Transparency",
-    Default = 0,
+    Default = tonumber(string.format("%.1f", Library.GroupboxTransparency * 100)),
     Min = 0,
     Max = 100,
     Rounding = 1,
@@ -535,6 +533,16 @@ task.defer(function()
         })
     end)
 end)
+
+do
+    local DefaultName = ThemeManager.DefaultThemeName
+    local CustomList = Options.ThemeManager_CustomThemeList
+    if DefaultName and CustomList and ThemeManager:GetCustomTheme(DefaultName) then
+        CustomList:SetValue(DefaultName)
+    end
+end
+
+SaveManager:LoadAutoloadConfig()
 
 --[═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════]--
 
