@@ -343,6 +343,18 @@ UIManagementGroup:AddSlider("GroupboxTransparency", {
     end,
 })
 
+UIManagementGroup:AddSlider("ElementTransparency", {
+    Text = "Element Interface Transparency",
+    Default = tonumber(string.format("%.1f", Library.ElementTransparencyValue * 100)),
+    Min = 0,
+    Max = 100,
+    Rounding = 1,
+    Suffix = "",
+    Callback = function(Value)
+        Library:SetElementTransparency(Value / 100)
+    end,
+})
+
 UIManagementGroup:AddDivider("Utility Interface Settings")
 
 UIManagementGroup:AddToggle("CompactSidebar", {
