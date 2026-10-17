@@ -281,6 +281,7 @@ local Library = {
         AccentColor = Color3.fromRGB(125, 85, 255),
         OutlineColor = Color3.fromRGB(40, 40, 40),
         FontColor = Color3.new(1, 1, 1),
+        ElementColor = Color3.new(1, 1, 1),
         Font = Font.fromEnum(Enum.Font.Code),
 
         RedColor = Color3.fromRGB(255, 50, 50),
@@ -3396,7 +3397,7 @@ function Library:AddDraggableLabel(...)
 
             IconImage = IconImage or New("ImageLabel", {
                 BackgroundTransparency = 1,
-                ImageColor3 = "FontColor",
+                ImageColor3 = "ElementColor",
                 Size = UDim2.fromOffset(16, 16),
                 ZIndex = 2,
                 Parent = Label,
@@ -3681,7 +3682,7 @@ function Library:AddDraggableImageButton(...)
         AnchorPoint = Vector2.new(0.5, 0.5),
         Position = UDim2.fromScale(0.5, 0.5),
         Size = UDim2.fromOffset(IconSize, IconSize),
-        ImageColor3 = "FontColor",
+        ImageColor3 = "ElementColor",
         ZIndex = 2,
         Parent = Button,
     })
@@ -4697,7 +4698,7 @@ do
             })
 
             local CheckImage = New("ImageLabel", {
-                ImageColor3 = "FontColor",
+                ImageColor3 = "ElementColor",
                 ImageTransparency = 1,
                 Position = UDim2.fromOffset(2, 2),
                 Size = UDim2.new(1, -4, 1, -4),
@@ -5899,7 +5900,7 @@ do
                 Parent = FooterBackground,
             })
             local ResizeGrabberIcon = New("ImageLabel", {
-                ImageColor3 = "FontColor",
+                ImageColor3 = "ElementColor",
                 ImageTransparency = 0.5,
                 Position = UDim2.fromOffset(2, 2),
                 Size = UDim2.new(1, -4, 1, -4),
@@ -6847,7 +6848,7 @@ do
 
             local ParsedIcon = Library:GetCustomIcon(IconName)
             if ParsedIcon then
-                local ColorKey = Button.Risky and "RedColor" or (ParsedIcon.Custom and "WhiteColor" or "FontColor")
+                local ColorKey = Button.Risky and "RedColor" or (ParsedIcon.Custom and "WhiteColor" or "ElementColor")
 
                 if not Button.IconImage then
                     Button.IconImage = New("ImageLabel", {
@@ -7344,7 +7345,7 @@ do
         })
 
         local CheckImage = New("ImageLabel", {
-            ImageColor3 = "FontColor",
+            ImageColor3 = "ElementColor",
             ImageTransparency = 1,
             Position = UDim2.fromOffset(2, 2),
             Size = UDim2.new(1, -4, 1, -4),
@@ -7605,7 +7606,7 @@ do
         })
 
         local Ball = New("Frame", {
-            BackgroundColor3 = "FontColor",
+            BackgroundColor3 = "ElementColor",
             Size = UDim2.fromScale(1, 1),
             SizeConstraint = Enum.SizeConstraint.RelativeYY,
             Parent = Switch,
@@ -7640,9 +7641,9 @@ do
                 Ball.AnchorPoint = Vector2.new(Offset, 0)
                 Ball.Position = UDim2.fromScale(Offset, 0)
 
-                Ball.BackgroundColor3 = Library:GetDarkerColor(Library.Scheme.FontColor)
+                Ball.BackgroundColor3 = Library:GetDarkerColor(Library.Scheme.ElementColor)
                 Library.Registry[Ball].BackgroundColor3 = function()
-                    return Library:GetDarkerColor(Library.Scheme.FontColor)
+                    return Library:GetDarkerColor(Library.Scheme.ElementColor)
                 end
 
                 return
@@ -7656,8 +7657,8 @@ do
                 Position = UDim2.fromScale(Offset, 0),
             }):Play()
 
-            Ball.BackgroundColor3 = Library.Scheme.FontColor
-            Library.Registry[Ball].BackgroundColor3 = "FontColor"
+            Ball.BackgroundColor3 = Library.Scheme.ElementColor
+            Library.Registry[Ball].BackgroundColor3 = "ElementColor"
         end
 
         function Toggle:OnChanged(Func)
@@ -8616,7 +8617,7 @@ do
 
         local ArrowImage = New("ImageLabel", {
             AnchorPoint = Vector2.new(1, 0.5),
-            ImageColor3 = "FontColor",
+            ImageColor3 = "ElementColor",
             ImageTransparency = 0.5,
             Position = UDim2.fromScale(1, 0.5),
             Size = UDim2.fromOffset(16, 16),
@@ -10821,7 +10822,7 @@ function Library:Notify(...)
             AnchorPoint = Vector2.new(1, 0),
             BackgroundTransparency = 1,
             Image = CloseIcon and CloseIcon.Url or "",
-            ImageColor3 = "FontColor",
+            ImageColor3 = "ElementColor",
             ImageRectOffset = CloseIcon and CloseIcon.ImageRectOffset or Vector2.zero,
             ImageRectSize = CloseIcon and CloseIcon.ImageRectSize or Vector2.zero,
             ImageTransparency = 0.5,
@@ -10906,7 +10907,7 @@ function Library:Notify(...)
                 AnchorPoint = Vector2.new(0, 0.5),
                 Position = UDim2.new(0, 0, 0.5, 1),
                 Size = UDim2.fromOffset(15, 15),
-                ImageColor3 = Data.IconColor or "FontColor",
+                ImageColor3 = Data.IconColor or "ElementColor",
                 Parent = TitleContainer,
             })
             Library:ApplyLucideIcon(IconLabel, ParsedIcon)
@@ -11258,7 +11259,7 @@ function Library:CreateWindow(WindowInfo)
         local SettingsButton = New("ImageButton", {
             AutoButtonColor = false,
             BackgroundTransparency = 1,
-            ImageColor3 = "FontColor",
+            ImageColor3 = "ElementColor",
             LayoutOrder = 1,
             Size = UDim2.fromOffset(18, 18),
             Visible = false,
@@ -11272,7 +11273,7 @@ function Library:CreateWindow(WindowInfo)
         local CollapseButton = New("ImageButton", {
             AutoButtonColor = false,
             BackgroundTransparency = 1,
-            ImageColor3 = "FontColor",
+            ImageColor3 = "ElementColor",
             LayoutOrder = 2,
             Size = UDim2.fromOffset(18, 18),
             ZIndex = 2,
@@ -11290,7 +11291,7 @@ function Library:CreateWindow(WindowInfo)
             AnchorPoint = Vector2.new(1, 0.5),
             AutoButtonColor = false,
             BackgroundTransparency = 1,
-            ImageColor3 = "FontColor",
+            ImageColor3 = "ElementColor",
             Position = UDim2.new(1, -8, 0, 17),
             Size = UDim2.fromOffset(18, 18),
             ZIndex = 2,
@@ -11365,7 +11366,7 @@ function Library:CreateWindow(WindowInfo)
                 })
 
                 local CheckImage = New("ImageLabel", {
-                    ImageColor3 = "FontColor",
+                    ImageColor3 = "ElementColor",
                     ImageTransparency = Visible and 0 or 1,
                     Position = UDim2.fromOffset(2, 2),
                     Size = UDim2.new(1, -4, 1, -4),
@@ -11794,7 +11795,7 @@ function Library:CreateWindow(WindowInfo)
         local SearchIcon = Library:GetIcon("search")
         if SearchIcon then
             local SearchIconImage = New("ImageLabel", {
-                ImageColor3 = "FontColor",
+                ImageColor3 = "ElementColor",
                 ImageTransparency = 0.5,
                 Size = UDim2.fromScale(1, 1),
                 SizeConstraint = Enum.SizeConstraint.RelativeYY,
@@ -11889,7 +11890,7 @@ function Library:CreateWindow(WindowInfo)
         end
 
         local WindowResizeIcon = New("ImageLabel", {
-            ImageColor3 = "FontColor",
+            ImageColor3 = "ElementColor",
             ImageTransparency = 0.5,
             Position = UDim2.fromOffset(2, 2),
             Size = UDim2.new(1, -4, 1, -4),
@@ -14171,7 +14172,7 @@ function Library:CreateWindow(WindowInfo)
                 local IconImg = New("ImageLabel", {
                     BackgroundTransparency = 1,
                     Size = UDim2.fromOffset(16, 16),
-                    ImageColor3 = Info.TitleColor or "FontColor",
+                    ImageColor3 = Info.TitleColor or "ElementColor",
                     LayoutOrder = 1,
                     ZIndex = 2,
                     Parent = TitleRow,
